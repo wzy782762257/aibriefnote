@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>AI Brief Note Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/styles.css">
+  </head>
+  <body class="admin-page">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="AI Brief Note 首页">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>AI Brief Note Admin</span>
+      </a>
+      <nav class="nav" aria-label="后台导航">
+        <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare</a>
+        <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense</a>
+        <a href="https://search.google.com/search-console" rel="noopener">Search Console</a>
+        <a href="/">返回网站</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="admin-hero">
+        <div>
+          <p class="kicker">Private Dashboard</p>
+          <h1>收益可行性看板</h1>
+          <p>这里用于集中判断流量、广告展示、点击率、RPM、内容更新和成本是否值得继续投入。实际广告收入以 AdSense 后台为准。</p>
+        </div>
+        <div class="status-chip">Basic Auth Protected</div>
+      </section>
+
+      <section class="metric-grid" aria-label="关键指标">
+        <article class="metric-card">
+          <span>PV</span>
+          <strong id="pvOutput">0</strong>
+          <p>页面浏览量，建议来自 Cloudflare Web Analytics 或 GA4。</p>
+        </article>
+        <article class="metric-card">
+          <span>Ad Impressions</span>
+          <strong id="impressionOutput">0</strong>
+          <p>广告展示量，以 AdSense 报表为准。</p>
+        </article>
+        <article class="metric-card">
+          <span>RPM</span>
+          <strong id="rpmOutput">$0.00</strong>
+          <p>每千次页面浏览预估收入。</p>
+        </article>
+        <article class="metric-card">
+          <span>ROI</span>
+          <strong id="roiOutput">0%</strong>
+          <p>收益与域名、工具、内容成本的对比。</p>
+        </article>
+      </section>
+
+      <section class="admin-layout">
+        <form class="admin-panel" id="roiForm">
+          <div class="section-heading">
+            <p class="kicker">Manual Inputs</p>
+            <h2>每日数据录入</h2>
+          </div>
+          <label>
+            页面浏览量 PV
+            <input name="pageviews" type="number" min="0" value="0">
+          </label>
+          <label>
+            广告展示量
+            <input name="impressions" type="number" min="0" value="0">
+          </label>
+          <label>
+            广告点击量
+            <input name="clicks" type="number" min="0" value="0">
+          </label>
+          <label>
+            AdSense 预估收入 USD
+            <input name="revenue" type="number" min="0" step="0.01" value="0">
+          </label>
+          <label>
+            当期成本 USD
+            <input name="cost" type="number" min="0" step="0.01" value="10.46">
+          </label>
+          <button type="submit">保存并计算</button>
+        </form>
+
+        <section class="admin-panel">
+          <div class="section-heading">
+            <p class="kicker">Source Links</p>
+            <h2>数据来源</h2>
+          </div>
+          <div class="source-links">
+            <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare Analytics</a>
+            <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense Reports</a>
+            <a href="https://search.google.com/search-console" rel="noopener">Search Console</a>
+            <a href="https://github.com/wzy782762257/aibriefnote/actions" rel="noopener">GitHub Actions</a>
+          </div>
+          <div class="formula-list">
+            <p><strong>CTR：</strong>广告点击量 / 广告展示量</p>
+            <p><strong>Page RPM：</strong>收入 / PV * 1000</p>
+            <p><strong>Ad RPM：</strong>收入 / 广告展示量 * 1000</p>
+            <p><strong>ROI：</strong>(收入 - 成本) / 成本</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="admin-panel">
+        <div class="section-heading">
+          <p class="kicker">Automation</p>
+          <h2>自动化状态</h2>
+        </div>
+        <div class="automation-grid">
+          <div>
+            <span>内容生成</span>
+            <strong>GitHub Actions</strong>
+            <p>每天定时运行，也可以手动 Run workflow。</p>
+          </div>
+          <div>
+            <span>部署</span>
+            <strong>Cloudflare Pages</strong>
+            <p>main 分支变化后自动构建部署。</p>
+          </div>
+          <div>
+            <span>广告</span>
+            <strong>AdSense Auto ads</strong>
+            <p>审核通过后由 Google 自动投放。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/admin/script.js"></script>
+  </body>
+</html>

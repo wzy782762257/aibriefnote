@@ -28,6 +28,31 @@ npm run update-content
 
 5. 保持自定义域名 `aibriefnote.com` 绑定到该 Pages 项目。
 
+## 后台鉴权
+
+后台路径是：
+
+```txt
+https://aibriefnote.com/admin/
+```
+
+它通过 Cloudflare Pages Functions 的 Basic Auth 保护。需要在 Cloudflare Pages 项目中设置环境变量：
+
+```txt
+ADMIN_USER=你自己的用户名
+ADMIN_PASSWORD=一个强密码
+```
+
+设置位置：
+
+```txt
+Cloudflare Pages 项目 -> Settings -> Environment variables
+```
+
+Production 和 Preview 环境都可以设置。设置后重新部署一次。
+
+后台当前提供决策面板和 ROI 手动录入。真实广告收入、广告展示量和点击量仍以 AdSense 报表为准；如果后续要自动拉取 AdSense 报表，需要接入 Google AdSense Management API 和 OAuth。
+
 ## 内容来源
 
 来源配置在：

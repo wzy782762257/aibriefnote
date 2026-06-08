@@ -1,0 +1,160 @@
+.admin-page {
+  background: #f7f8f5;
+}
+
+.admin-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+  padding: 42px 0 28px;
+}
+
+.admin-hero h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2.1rem, 5vw, 4.2rem);
+}
+
+.admin-hero p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.status-chip {
+  flex: 0 0 auto;
+  border: 1px solid #b8c4bd;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--green-dark);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.metric-card,
+.admin-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-card span,
+.automation-grid span {
+  color: var(--muted);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 2rem;
+}
+
+.metric-card p,
+.automation-grid p,
+.formula-list p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.admin-panel {
+  padding: 22px;
+}
+
+.admin-panel label {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 14px;
+  color: #33453d;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 700;
+}
+
+.admin-panel input {
+  min-height: 42px;
+  border: 1px solid #b8c4bd;
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 0 12px;
+  color: var(--ink);
+  font: inherit;
+}
+
+.admin-panel button,
+.source-links a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--green-dark);
+  border-radius: var(--radius);
+  background: var(--green-dark);
+  color: #fff9e8;
+  padding: 0 14px;
+  font-weight: 700;
+}
+
+.source-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.formula-list {
+  margin-top: 18px;
+}
+
+.automation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.automation-grid div {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .admin-hero,
+  .admin-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid,
+  .automation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .metric-grid,
+  .automation-grid,
+  .source-links {
+    grid-template-columns: 1fr;
+  }
+}
