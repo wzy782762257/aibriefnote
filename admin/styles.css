@@ -52,12 +52,13 @@
 }
 
 .metric-card span,
-.automation-grid span {
+.automation-grid span,
+.chart-legend,
+.axis-label {
   color: var(--muted);
   font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
   font-size: 0.78rem;
   font-weight: 700;
-  text-transform: uppercase;
 }
 
 .metric-card strong {
@@ -78,6 +79,17 @@
   grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
   gap: 18px;
   margin-bottom: 18px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.chart-grid .chart-panel:first-child {
+  grid-row: span 2;
 }
 
 .admin-panel {
@@ -138,11 +150,96 @@
   padding-top: 14px;
 }
 
+.chart {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+}
+
+.chart text {
+  fill: #40514a;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+.chart .grid-line {
+  stroke: #d9e1dc;
+  stroke-width: 1;
+}
+
+.chart .pv-line {
+  fill: none;
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.chart .revenue-line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.chart .bar-revenue {
+  fill: var(--green);
+}
+
+.chart .bar-cost {
+  fill: var(--coral);
+}
+
+.chart .funnel-step {
+  fill: rgba(35, 104, 77, 0.88);
+}
+
+.chart .funnel-step:nth-of-type(2) {
+  fill: rgba(49, 95, 143, 0.88);
+}
+
+.chart .funnel-step:nth-of-type(3) {
+  fill: rgba(184, 133, 47, 0.9);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chart-legend i {
+  display: inline-block;
+  width: 22px;
+  height: 4px;
+  border-radius: 999px;
+}
+
+.legend-pv {
+  background: var(--green);
+}
+
+.legend-revenue {
+  background: var(--gold);
+}
+
 @media (max-width: 900px) {
   .admin-hero,
-  .admin-layout {
+  .admin-layout,
+  .chart-grid {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .chart-grid .chart-panel:first-child {
+    grid-row: auto;
   }
 
   .metric-grid,

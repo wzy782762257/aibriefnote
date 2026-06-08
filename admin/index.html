@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
-    <title>AI Brief Note Admin</title>
+    <title>AI Brief Note 管理后台</title>
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/admin/styles.css">
   </head>
@@ -12,12 +12,12 @@
     <header class="site-header">
       <a class="brand" href="/" aria-label="AI Brief Note 首页">
         <span class="brand-mark" aria-hidden="true">A</span>
-        <span>AI Brief Note Admin</span>
+        <span>AI Brief Note 管理后台</span>
       </a>
       <nav class="nav" aria-label="后台导航">
-        <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare</a>
-        <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense</a>
-        <a href="https://search.google.com/search-console" rel="noopener">Search Console</a>
+        <a href="https://dash.cloudflare.com/" rel="noopener">访问分析</a>
+        <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">广告报表</a>
+        <a href="https://search.google.com/search-console" rel="noopener">搜索收录</a>
         <a href="/">返回网站</a>
       </nav>
     </header>
@@ -25,26 +25,26 @@
     <main>
       <section class="admin-hero">
         <div>
-          <p class="kicker">Private Dashboard</p>
+          <p class="kicker">私有数据面板</p>
           <h1>收益可行性看板</h1>
           <p>这里用于集中判断流量、广告展示、点击率、RPM、内容更新和成本是否值得继续投入。实际广告收入以 AdSense 后台为准。</p>
         </div>
-        <div class="status-chip">Basic Auth Protected</div>
+        <div class="status-chip">已启用访问鉴权</div>
       </section>
 
       <section class="metric-grid" aria-label="关键指标">
         <article class="metric-card">
-          <span>PV</span>
+          <span>页面浏览量</span>
           <strong id="pvOutput">0</strong>
           <p>页面浏览量，建议来自 Cloudflare Web Analytics 或 GA4。</p>
         </article>
         <article class="metric-card">
-          <span>Ad Impressions</span>
+          <span>广告展示量</span>
           <strong id="impressionOutput">0</strong>
           <p>广告展示量，以 AdSense 报表为准。</p>
         </article>
         <article class="metric-card">
-          <span>RPM</span>
+          <span>页面 RPM</span>
           <strong id="rpmOutput">$0.00</strong>
           <p>每千次页面浏览预估收入。</p>
         </article>
@@ -55,10 +55,40 @@
         </article>
       </section>
 
+      <section class="chart-grid" aria-label="可视化图表">
+        <article class="admin-panel chart-panel">
+          <div class="section-heading">
+            <p class="kicker">趋势图</p>
+            <h2>近 7 日流量与广告收入</h2>
+          </div>
+          <svg id="trendChart" class="chart" viewBox="0 0 720 280" role="img" aria-label="近 7 日页面浏览量与收入趋势"></svg>
+          <div class="chart-legend">
+            <span><i class="legend-pv"></i>页面浏览量</span>
+            <span><i class="legend-revenue"></i>广告收入</span>
+          </div>
+        </article>
+
+        <article class="admin-panel chart-panel">
+          <div class="section-heading">
+            <p class="kicker">转化图</p>
+            <h2>浏览到点击漏斗</h2>
+          </div>
+          <svg id="funnelChart" class="chart" viewBox="0 0 560 280" role="img" aria-label="页面浏览量、广告展示量、广告点击量漏斗"></svg>
+        </article>
+
+        <article class="admin-panel chart-panel">
+          <div class="section-heading">
+            <p class="kicker">回本图</p>
+            <h2>收入与成本对比</h2>
+          </div>
+          <svg id="roiChart" class="chart" viewBox="0 0 560 280" role="img" aria-label="收入与成本对比"></svg>
+        </article>
+      </section>
+
       <section class="admin-layout">
         <form class="admin-panel" id="roiForm">
           <div class="section-heading">
-            <p class="kicker">Manual Inputs</p>
+            <p class="kicker">手动录入</p>
             <h2>每日数据录入</h2>
           </div>
           <label>
@@ -86,14 +116,14 @@
 
         <section class="admin-panel">
           <div class="section-heading">
-            <p class="kicker">Source Links</p>
+            <p class="kicker">数据来源</p>
             <h2>数据来源</h2>
           </div>
           <div class="source-links">
-            <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare Analytics</a>
-            <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense Reports</a>
-            <a href="https://search.google.com/search-console" rel="noopener">Search Console</a>
-            <a href="https://github.com/wzy782762257/aibriefnote/actions" rel="noopener">GitHub Actions</a>
+            <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare 访问分析</a>
+            <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense 广告报表</a>
+            <a href="https://search.google.com/search-console" rel="noopener">Google 搜索收录</a>
+            <a href="https://github.com/wzy782762257/aibriefnote/actions" rel="noopener">自动化任务记录</a>
           </div>
           <div class="formula-list">
             <p><strong>CTR：</strong>广告点击量 / 广告展示量</p>
@@ -106,7 +136,7 @@
 
       <section class="admin-panel">
         <div class="section-heading">
-          <p class="kicker">Automation</p>
+          <p class="kicker">自动化</p>
           <h2>自动化状态</h2>
         </div>
         <div class="automation-grid">

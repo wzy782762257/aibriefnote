@@ -9,6 +9,7 @@ const currency = new Intl.NumberFormat("en-US", {
 
 const form = document.querySelector("#roiForm");
 const saved = JSON.parse(localStorage.getItem("aibriefnote-admin-metrics") || "{}");
+const history = JSON.parse(localStorage.getItem("aibriefnote-admin-history") || "[]");
 
 function numberValue(formData, key) {
   return Number(formData.get(key) || 0);
@@ -30,6 +31,122 @@ function renderMetrics(values) {
   document.querySelector("#roiOutput").textContent = `${formatter.format(roi)}%`;
 
   form.dataset.ctr = `${formatter.format(ctr)}%`;
+  renderCharts(values);
+}
+
+function buildHistory(values) {
+  const pageviews = Number(values.pageviews || 0);
+  const revenue = Number(values.revenue || 0);
+  const base = history.slice(-6);
+  const today = {
+    date: new Date().toISOString().slice(5, 10),
+    pageviews,
+    revenue
+  };
+
+  if (!base.length) {
+    return Array.from({ length: 6 }, (_, index) => ({
+      date: `D-${6 - index}`,
+      pageviews: Math.max(0, Math.round(pageviews * (0.35 + index * 0.1))),
+      revenue: Math.max(0, Number((revenue * (0.3 + index * 0.11)).toFixed(2)))
+    })).concat(today);
+  }
+
+  return base.concat(today);
+}
+
+function pointPath(points) {
+  return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+}
+
+function renderTrendChart(values) {
+  const svg = document.querySelector("#trendChart");
+  if (!svg) return;
+
+  const data = buildHistory(values);
+  const width = 720;
+  const height = 280;
+  const pad = { left: 52, right: 26, top: 24, bottom: 42 };
+  const innerWidth = width - pad.left - pad.right;
+  const innerHeight = height - pad.top - pad.bottom;
+  const maxPv = Math.max(1, ...data.map((item) => Number(item.pageviews || 0)));
+  const maxRevenue = Math.max(1, ...data.map((item) => Number(item.revenue || 0)));
+
+  const pointsPv = data.map((item, index) => ({
+    x: pad.left + (innerWidth / (data.length - 1)) * index,
+    y: pad.top + innerHeight - (Number(item.pageviews || 0) / maxPv) * innerHeight
+  }));
+
+  const pointsRevenue = data.map((item, index) => ({
+    x: pad.left + (innerWidth / (data.length - 1)) * index,
+    y: pad.top + innerHeight - (Number(item.revenue || 0) / maxRevenue) * innerHeight
+  }));
+
+  svg.innerHTML = `
+    <line class="grid-line" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + innerHeight}"></line>
+    <line class="grid-line" x1="${pad.left}" y1="${pad.top + innerHeight}" x2="${pad.left + innerWidth}" y2="${pad.top + innerHeight}"></line>
+    <line class="grid-line" x1="${pad.left}" y1="${pad.top + innerHeight / 2}" x2="${pad.left + innerWidth}" y2="${pad.top + innerHeight / 2}"></line>
+    <path class="pv-line" d="${pointPath(pointsPv)}"></path>
+    <path class="revenue-line" d="${pointPath(pointsRevenue)}"></path>
+    ${pointsPv.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="5" fill="#23684d"></circle>`).join("")}
+    ${pointsRevenue.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="5" fill="#b8852f"></circle>`).join("")}
+    ${data.map((item, index) => `<text x="${pointsPv[index].x}" y="${height - 14}" text-anchor="middle">${item.date}</text>`).join("")}
+    <text x="8" y="${pad.top + 6}">PV</text>
+    <text x="${width - 78}" y="${pad.top + 6}">收入</text>
+  `;
+}
+
+function renderFunnelChart(values) {
+  const svg = document.querySelector("#funnelChart");
+  if (!svg) return;
+
+  const pageviews = Math.max(0, Number(values.pageviews || 0));
+  const impressions = Math.max(0, Number(values.impressions || 0));
+  const clicks = Math.max(0, Number(values.clicks || 0));
+  const maxValue = Math.max(1, pageviews, impressions, clicks);
+  const steps = [
+    ["页面浏览", pageviews],
+    ["广告展示", impressions],
+    ["广告点击", clicks]
+  ];
+
+  svg.innerHTML = steps.map(([label, value], index) => {
+    const y = 34 + index * 78;
+    const ratio = Math.max(0.08, value / maxValue);
+    const width = 420 * ratio;
+    const x = 70 + (420 - width) / 2;
+    return `
+      <rect class="funnel-step" x="${x}" y="${y}" width="${width}" height="46" rx="8"></rect>
+      <text x="280" y="${y + 30}" text-anchor="middle" fill="#fff">${label}：${formatter.format(value)}</text>
+    `;
+  }).join("");
+}
+
+function renderRoiChart(values) {
+  const svg = document.querySelector("#roiChart");
+  if (!svg) return;
+
+  const revenue = Math.max(0, Number(values.revenue || 0));
+  const cost = Math.max(0, Number(values.cost || 0));
+  const maxValue = Math.max(1, revenue, cost);
+  const revenueHeight = (revenue / maxValue) * 170;
+  const costHeight = (cost / maxValue) * 170;
+
+  svg.innerHTML = `
+    <line class="grid-line" x1="80" y1="230" x2="500" y2="230"></line>
+    <rect class="bar-revenue" x="150" y="${230 - revenueHeight}" width="92" height="${revenueHeight}" rx="8"></rect>
+    <rect class="bar-cost" x="320" y="${230 - costHeight}" width="92" height="${costHeight}" rx="8"></rect>
+    <text x="196" y="${216 - revenueHeight}" text-anchor="middle">${currency.format(revenue)}</text>
+    <text x="366" y="${216 - costHeight}" text-anchor="middle">${currency.format(cost)}</text>
+    <text x="196" y="258" text-anchor="middle">收入</text>
+    <text x="366" y="258" text-anchor="middle">成本</text>
+  `;
+}
+
+function renderCharts(values) {
+  renderTrendChart(values);
+  renderFunnelChart(values);
+  renderRoiChart(values);
 }
 
 if (form) {
@@ -52,6 +169,15 @@ if (form) {
     };
 
     localStorage.setItem("aibriefnote-admin-metrics", JSON.stringify(values));
+    const today = new Date().toISOString().slice(0, 10);
+    const nextHistory = history.filter((item) => item.fullDate !== today).concat({
+      date: today.slice(5),
+      fullDate: today,
+      pageviews: values.pageviews,
+      revenue: values.revenue
+    }).slice(-30);
+
+    localStorage.setItem("aibriefnote-admin-history", JSON.stringify(nextHistory));
     renderMetrics(values);
   });
 }
