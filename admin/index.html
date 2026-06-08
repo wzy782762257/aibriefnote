@@ -27,9 +27,39 @@
         <div>
           <p class="kicker">私有数据面板</p>
           <h1>收益可行性看板</h1>
-          <p>这里用于集中判断流量、广告展示、点击率、RPM、内容更新和成本是否值得继续投入。实际广告收入以 AdSense 后台为准。</p>
+          <p>这里用于集中判断流量、广告展示、点击率、RPM、内容更新和成本是否值得继续投入。页面默认读取后台数据源并自动渲染图表，实际广告收入以 AdSense 后台为准。</p>
         </div>
         <div class="status-chip">已启用访问鉴权</div>
+      </section>
+
+      <section class="admin-panel workbench-panel" aria-label="工作台概览">
+        <div class="section-heading">
+          <p class="kicker">工作台概览</p>
+          <h2>数据接入与运营状态</h2>
+        </div>
+        <div class="workbench-grid">
+          <a class="workbench-card" href="https://dash.cloudflare.com/" rel="noopener">
+            <span>访问数据</span>
+            <strong>Cloudflare 访问分析</strong>
+            <p id="cloudflareStatus">等待接入 API，当前读取本地数据源。</p>
+          </a>
+          <a class="workbench-card" href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">
+            <span>广告数据</span>
+            <strong>AdSense 广告报表</strong>
+            <p id="adsenseStatus">审核通过后可录入或接入报表数据。</p>
+          </a>
+          <a class="workbench-card" href="https://search.google.com/search-console" rel="noopener">
+            <span>收录数据</span>
+            <strong>Google 搜索收录</strong>
+            <p id="searchStatus">用于观察曝光、点击和索引页面。</p>
+          </a>
+          <a class="workbench-card" href="https://github.com/wzy782762257/aibriefnote/actions" rel="noopener">
+            <span>自动任务</span>
+            <strong>内容生成与部署</strong>
+            <p id="automationStatus">GitHub Actions 定时生成内容，Cloudflare 自动部署。</p>
+          </a>
+        </div>
+        <p class="data-note">当前数据读取：<code>/admin/data.json</code>。最后更新：<strong id="lastUpdatedOutput">-</strong></p>
       </section>
 
       <section class="metric-grid" aria-label="关键指标">
@@ -85,12 +115,38 @@
         </article>
       </section>
 
-      <section class="admin-layout">
-        <form class="admin-panel" id="roiForm">
-          <div class="section-heading">
-            <p class="kicker">手动录入</p>
-            <h2>每日数据录入</h2>
+      <section class="admin-panel">
+        <div class="section-heading">
+          <p class="kicker">自动化</p>
+          <h2>自动化状态</h2>
+        </div>
+        <div class="automation-grid">
+          <div>
+            <span>内容生成</span>
+            <strong>GitHub Actions</strong>
+            <p>每天定时运行，也可以手动 Run workflow。</p>
           </div>
+          <div>
+            <span>部署</span>
+            <strong>Cloudflare Pages</strong>
+            <p>main 分支变化后自动构建部署。</p>
+          </div>
+          <div>
+            <span>广告</span>
+            <strong>AdSense 自动广告</strong>
+            <p>审核通过后由 Google 自动投放。</p>
+          </div>
+        </div>
+      </section>
+
+      <details class="admin-panel manual-panel">
+        <summary>临时覆盖数据</summary>
+        <form id="roiForm">
+          <div class="section-heading">
+            <p class="kicker">调试与校准</p>
+            <h2>临时覆盖当前数据</h2>
+          </div>
+          <p class="panel-help">这里只用于 AdSense/Cloudflare API 尚未接入前的临时校准。保存后会覆盖本机浏览器中的看板数据，不会写入服务器。</p>
           <label>
             页面浏览量 PV
             <input name="pageviews" type="number" min="0" value="0">
@@ -113,50 +169,13 @@
           </label>
           <button type="submit">保存并计算</button>
         </form>
-
-        <section class="admin-panel">
-          <div class="section-heading">
-            <p class="kicker">数据来源</p>
-            <h2>数据来源</h2>
-          </div>
-          <div class="source-links">
-            <a href="https://dash.cloudflare.com/" rel="noopener">Cloudflare 访问分析</a>
-            <a href="https://adsense.google.com/adsense/u/0/pub-6929744420910509/reports" rel="noopener">AdSense 广告报表</a>
-            <a href="https://search.google.com/search-console" rel="noopener">Google 搜索收录</a>
-            <a href="https://github.com/wzy782762257/aibriefnote/actions" rel="noopener">自动化任务记录</a>
-          </div>
-          <div class="formula-list">
-            <p><strong>CTR：</strong>广告点击量 / 广告展示量</p>
-            <p><strong>Page RPM：</strong>收入 / PV * 1000</p>
-            <p><strong>Ad RPM：</strong>收入 / 广告展示量 * 1000</p>
-            <p><strong>ROI：</strong>(收入 - 成本) / 成本</p>
-          </div>
-        </section>
-      </section>
-
-      <section class="admin-panel">
-        <div class="section-heading">
-          <p class="kicker">自动化</p>
-          <h2>自动化状态</h2>
+        <div class="formula-list">
+          <p><strong>CTR：</strong>广告点击量 / 广告展示量</p>
+          <p><strong>Page RPM：</strong>收入 / PV * 1000</p>
+          <p><strong>Ad RPM：</strong>收入 / 广告展示量 * 1000</p>
+          <p><strong>ROI：</strong>(收入 - 成本) / 成本</p>
         </div>
-        <div class="automation-grid">
-          <div>
-            <span>内容生成</span>
-            <strong>GitHub Actions</strong>
-            <p>每天定时运行，也可以手动 Run workflow。</p>
-          </div>
-          <div>
-            <span>部署</span>
-            <strong>Cloudflare Pages</strong>
-            <p>main 分支变化后自动构建部署。</p>
-          </div>
-          <div>
-            <span>广告</span>
-            <strong>AdSense Auto ads</strong>
-            <p>审核通过后由 Google 自动投放。</p>
-          </div>
-        </div>
-      </section>
+      </details>
     </main>
 
     <script src="/admin/script.js"></script>

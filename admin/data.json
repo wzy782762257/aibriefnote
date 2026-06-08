@@ -1,0 +1,25 @@
+{
+  "lastUpdated": "2026-06-08 14:30 CST",
+  "current": {
+    "pageviews": 0,
+    "impressions": 0,
+    "clicks": 0,
+    "revenue": 0,
+    "cost": 10.46
+  },
+  "history": [
+    { "date": "06-02", "pageviews": 0, "revenue": 0 },
+    { "date": "06-03", "pageviews": 0, "revenue": 0 },
+    { "date": "06-04", "pageviews": 0, "revenue": 0 },
+    { "date": "06-05", "pageviews": 0, "revenue": 0 },
+    { "date": "06-06", "pageviews": 0, "revenue": 0 },
+    { "date": "06-07", "pageviews": 0, "revenue": 0 },
+    { "date": "06-08", "pageviews": 0, "revenue": 0 }
+  ],
+  "sources": {
+    "cloudflare": "未接入 API",
+    "adsense": "等待 AdSense 审核",
+    "searchConsole": "待提交 sitemap",
+    "automation": "GitHub + Cloudflare Pages 已配置"
+  }
+}

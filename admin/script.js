@@ -9,13 +9,40 @@ const currency = new Intl.NumberFormat("en-US", {
 
 const form = document.querySelector("#roiForm");
 const saved = JSON.parse(localStorage.getItem("aibriefnote-admin-metrics") || "{}");
-const history = JSON.parse(localStorage.getItem("aibriefnote-admin-history") || "[]");
+let sourceHistory = [];
 
 function numberValue(formData, key) {
   return Number(formData.get(key) || 0);
 }
 
-function renderMetrics(values) {
+function normalizeData(payload) {
+  const current = payload.current || {};
+  const localOverride = JSON.parse(localStorage.getItem("aibriefnote-admin-metrics") || "{}");
+  const values = Object.keys(localOverride).length ? localOverride : current;
+
+  return {
+    history: payload.history || [],
+    lastUpdated: payload.lastUpdated || "-",
+    sources: payload.sources || {},
+    values
+  };
+}
+
+function renderSourceStatus(sources, lastUpdated) {
+  const setText = (id, value) => {
+    const node = document.querySelector(id);
+    if (node) node.textContent = value || "-";
+  };
+
+  setText("#cloudflareStatus", sources.cloudflare);
+  setText("#adsenseStatus", sources.adsense);
+  setText("#searchStatus", sources.searchConsole);
+  setText("#automationStatus", sources.automation);
+  setText("#lastUpdatedOutput", lastUpdated);
+}
+
+function renderMetrics(values, history = sourceHistory) {
+  sourceHistory = history;
   const pageviews = Number(values.pageviews || 0);
   const impressions = Number(values.impressions || 0);
   const clicks = Number(values.clicks || 0);
@@ -37,7 +64,7 @@ function renderMetrics(values) {
 function buildHistory(values) {
   const pageviews = Number(values.pageviews || 0);
   const revenue = Number(values.revenue || 0);
-  const base = history.slice(-6);
+  const base = sourceHistory.slice(-6);
   const today = {
     date: new Date().toISOString().slice(5, 10),
     pageviews,
@@ -149,14 +176,35 @@ function renderCharts(values) {
   renderRoiChart(values);
 }
 
-if (form) {
-  Object.entries(saved).forEach(([key, value]) => {
+async function loadDashboard() {
+  try {
+    const response = await fetch("/admin/data.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`data source returned ${response.status}`);
+    const data = normalizeData(await response.json());
+    renderSourceStatus(data.sources, data.lastUpdated);
+    hydrateForm(data.values);
+    renderMetrics(data.values, data.history);
+  } catch (error) {
+    renderSourceStatus({
+      cloudflare: "数据源读取失败",
+      adsense: "数据源读取失败",
+      searchConsole: "数据源读取失败",
+      automation: "请检查 /admin/data.json"
+    }, "-");
+    hydrateForm(saved);
+    renderMetrics(saved, []);
+  }
+}
+
+function hydrateForm(values) {
+  if (!form) return;
+  Object.entries(values || {}).forEach(([key, value]) => {
     const input = form.elements.namedItem(key);
     if (input) input.value = value;
   });
+}
 
-  renderMetrics(saved);
-
+if (form) {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(form);
@@ -169,15 +217,8 @@ if (form) {
     };
 
     localStorage.setItem("aibriefnote-admin-metrics", JSON.stringify(values));
-    const today = new Date().toISOString().slice(0, 10);
-    const nextHistory = history.filter((item) => item.fullDate !== today).concat({
-      date: today.slice(5),
-      fullDate: today,
-      pageviews: values.pageviews,
-      revenue: values.revenue
-    }).slice(-30);
-
-    localStorage.setItem("aibriefnote-admin-history", JSON.stringify(nextHistory));
     renderMetrics(values);
   });
 }
+
+loadDashboard();
