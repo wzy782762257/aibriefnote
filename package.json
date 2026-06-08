@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "update-content": "node scripts/update-content.mjs",
-    "build": "node scripts/update-content.mjs"
+    "build": "node scripts/update-content.mjs",
+    "auto-push": "node scripts/git-auto-push.mjs --once",
+    "watch-push": "node scripts/git-auto-push.mjs --watch",
+    "deploy": "npm run build && node scripts/git-auto-push.mjs --once",
+    "install-post-commit-push": "node scripts/install-post-commit-push.mjs"
   }
 }

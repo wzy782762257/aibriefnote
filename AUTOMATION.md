@@ -10,6 +10,38 @@
 4. GitHub Actions 每天自动运行脚本并提交更新。
 5. Cloudflare Pages 连接 GitHub 仓库后，每次提交都会自动部署。
 
+## 本地编辑后自动推送
+
+如果只是想把当前改动生成内容、提交并推送一次，运行：
+
+```sh
+npm run auto-push
+```
+
+如果想持续监听本地文件变化，安静 3 秒后自动生成内容、提交并推送，运行：
+
+```sh
+npm run watch-push
+```
+
+如果你更习惯手动 `git commit`，可以安装提交后自动推送 hook：
+
+```sh
+npm run install-post-commit-push
+```
+
+安装后，每次本地提交都会自动执行：
+
+```sh
+git push origin 当前分支
+```
+
+如果 GitHub 推送失败，优先检查当前网络能否解析 `github.com`，以及 GitHub HTTPS 凭据或 SSH key 是否可用。
+
+## GitHub Actions 自动更新
+
+仓库包含 `.github/workflows/update-content.yml`。它会在每天 06:20（北京时间）运行，也支持在 GitHub Actions 页面手动 `workflow_dispatch`。如果脚本生成了新内容，Action 会自动提交并推送，随后 Cloudflare Pages 会被 GitHub 提交触发自动部署。
+
 ## 一次性配置
 
 1. 把当前项目推送到 GitHub。
