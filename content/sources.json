@@ -1,0 +1,24 @@
+{
+  "site": {
+    "name": "AI Brief Note",
+    "url": "https://aibriefnote.com",
+    "publisherId": "ca-pub-6929744420910509"
+  },
+  "feeds": [
+    {
+      "name": "Google Search Central",
+      "url": "https://developers.google.com/search/blog/rss.xml",
+      "category": "SEO"
+    },
+    {
+      "name": "Cloudflare Blog",
+      "url": "https://blog.cloudflare.com/rss/",
+      "category": "Web"
+    },
+    {
+      "name": "OpenAI News",
+      "url": "https://openai.com/news/rss.xml",
+      "category": "AI"
+    }
+  ]
+}

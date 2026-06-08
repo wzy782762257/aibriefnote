@@ -1,0 +1,10 @@
+{
+  "name": "aibriefnote",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update-content": "node scripts/update-content.mjs",
+    "build": "node scripts/update-content.mjs"
+  }
+}
