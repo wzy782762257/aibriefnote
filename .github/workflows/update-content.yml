@@ -2,11 +2,16 @@ name: Update content
 
 on:
   schedule:
-    - cron: "20 22 * * *"
+    # 09:20 Asia/Shanghai. GitHub Actions cron uses UTC.
+    - cron: "20 1 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: daily-content
+  cancel-in-progress: false
 
 jobs:
   update-content:

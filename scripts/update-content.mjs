@@ -4,7 +4,6 @@ import path from "node:path";
 const root = process.cwd();
 const today = new Date().toISOString().slice(0, 10);
 const sourcesPath = path.join(root, "content", "sources.json");
-const fallbackPath = path.join(root, "content", "fallback-items.json");
 const articlesDir = path.join(root, "articles");
 
 const config = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
@@ -83,10 +82,18 @@ async function fetchFeed(feed) {
 
 async function loadItems() {
   const batches = await Promise.allSettled(config.feeds.map(fetchFeed));
+  const failed = batches
+    .map((result, index) => ({ result, feed: config.feeds[index] }))
+    .filter(({ result }) => result.status === "rejected");
+
+  for (const { result, feed } of failed) {
+    console.warn(`Feed failed: ${feed.name} - ${result.reason.message}`);
+  }
+
   const items = batches.flatMap((result) => result.status === "fulfilled" ? result.value : []);
 
   if (!items.length) {
-    return JSON.parse(await fs.readFile(fallbackPath, "utf8"));
+    throw new Error("No live feed items were fetched. Refusing to publish fallback or seed content.");
   }
 
   const seen = new Set();
@@ -96,6 +103,11 @@ async function loadItems() {
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
+    })
+    .sort((a, b) => {
+      const aTime = Date.parse(a.published || "") || 0;
+      const bTime = Date.parse(b.published || "") || 0;
+      return bTime - aTime;
     })
     .slice(0, 8);
 }
@@ -178,13 +190,13 @@ ${rows}
 
 function makeTakeaway(item) {
   const title = `${item.title} ${item.summary}`.toLowerCase();
-  if (title.includes("search") || title.includes("seo")) {
+  if (item.category === "SEO" || /\b(search|seo|index|crawl|ranking|schema)\b/.test(title)) {
     return "这类变化会影响内容站被发现和被理解的方式，适合后续转化为 SEO 检查清单。";
   }
-  if (title.includes("ai") || title.includes("model")) {
+  if (item.category === "AI" || /\b(ai|model|chatgpt|openai|agent|agents)\b/.test(title)) {
     return "这类 AI 更新适合沉淀成工具对比、使用教程和价格说明页面。";
   }
-  if (title.includes("cloudflare") || title.includes("web")) {
+  if (item.category === "Web" || /\b(cloudflare|web|dns|waf|cdn|vite|security|infrastructure)\b/.test(title)) {
     return "这类基础设施更新可能影响静态站性能、安全和自动化部署。";
   }
   return "这条信息适合继续观察，并作为后续专题页的素材来源。";
@@ -196,9 +208,19 @@ async function updateIndex(items) {
   const cards = items.slice(0, 4).map(articleCard).join("\n");
   const latestHref = `articles/${slug}.html`;
   const latestTitle = `${today} AI 工具与搜索简报`;
+  const feature = `          <article class="feature-card">
+            <div class="article-visual visual-indexing" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div>
+              <p class="meta">每日简报 · 公开来源</p>
+              <h3><a href="${latestHref}">${latestTitle}</a></h3>
+              <p>自动整理 AI、搜索、SEO 与 Web 基础设施公开来源，并保留原文链接与编辑判断。</p>
+            </div>
+          </article>`;
 
   html = html
-    .replace(/<h3><a href="[^"]*">AI 搜索时代，一篇文章需要哪些结构化信号？<\/a><\/h3>/, `<h3><a href="${latestHref}">${latestTitle}</a></h3>`)
+    .replace(/          <article class="feature-card">[\s\S]*?          <\/article>/, feature)
     .replace(/<div class="article-grid">[\s\S]*?<\/div>\s*<\/div>\s*<aside class="sidebar"/, `<div class="article-grid">\n${cards}\n          </div>\n        </div>\n\n        <aside class="sidebar"`);
 
   await fs.writeFile(indexPath, html);
@@ -208,10 +230,13 @@ async function renderArticleIndex() {
   const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html").sort().reverse();
   const cards = files.map((file) => {
     const date = file.match(/(\d{4}-\d{2}-\d{2})/)?.[1] || file.replace(".html", "");
+    const isSourceRecord = file === "ai-brief-2026-06-08.html";
+    const title = isSourceRecord ? `${date} 公开来源记录` : `${date} AI 工具与搜索简报`;
+    const summary = isSourceRecord ? "记录每日简报使用的公开来源和编辑规则。" : "自动整理 AI、搜索、SEO 与网站基础设施公开来源。";
     return `            <article class="article-card">
               <p class="meta">Daily Brief · ${date}</p>
-              <h3><a href="/articles/${file}">${date} AI 工具与搜索简报</a></h3>
-              <p>自动整理 AI、搜索、SEO 与网站基础设施公开来源。</p>
+              <h3><a href="/articles/${file}">${title}</a></h3>
+              <p>${summary}</p>
             </article>`;
   }).join("\n");
 

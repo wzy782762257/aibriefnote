@@ -7,8 +7,10 @@
 1. `scripts/update-content.mjs` 每天读取 `content/sources.json` 中的公开 RSS 来源。
 2. 脚本生成一篇每日简报到 `articles/`。
 3. 脚本更新首页文章卡片和 `sitemap.xml`。
-4. GitHub Actions 每天自动运行脚本并提交更新。
+4. GitHub Actions 每天自动运行脚本并提交更新。当前保留一个每日任务，时间为北京时间 09:20。
 5. Cloudflare Pages 连接 GitHub 仓库后，每次提交都会自动部署。
+
+如果所有 RSS 来源都抓取失败，脚本会直接失败并停止发布，避免把占位内容或测试内容写到首页。
 
 ## 本地编辑后自动推送
 
@@ -40,7 +42,7 @@ git push origin 当前分支
 
 ## GitHub Actions 自动更新
 
-仓库包含 `.github/workflows/update-content.yml`。它会在每天 06:20（北京时间）运行，也支持在 GitHub Actions 页面手动 `workflow_dispatch`。如果脚本生成了新内容，Action 会自动提交并推送，随后 Cloudflare Pages 会被 GitHub 提交触发自动部署。
+仓库包含 `.github/workflows/update-content.yml`。它会在每天 09:20（北京时间）运行，也支持在 GitHub Actions 页面手动 `workflow_dispatch`。如果脚本生成了新内容，Action 会自动提交并推送，随后 Cloudflare Pages 会被 GitHub 提交触发自动部署。
 
 ## 一次性配置
 
