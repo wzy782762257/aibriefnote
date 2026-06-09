@@ -26,6 +26,14 @@ npm run auto-push
 npm run watch-push
 ```
 
+如果只想手动触发 GitHub Actions 上的每日生成任务，而不依赖 GitHub CLI 登录状态，运行：
+
+```sh
+npm run trigger-content
+```
+
+这个命令会优先读取 `GITHUB_TOKEN`，如果没有设置，就使用本机 Git HTTPS 凭据调用 GitHub API 触发 `.github/workflows/update-content.yml`。
+
 如果你更习惯手动 `git commit`，可以安装提交后自动推送 hook：
 
 ```sh

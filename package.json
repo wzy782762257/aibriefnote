@@ -9,6 +9,7 @@
     "auto-push": "node scripts/git-auto-push.mjs --once",
     "watch-push": "node scripts/git-auto-push.mjs --watch",
     "deploy": "npm run build && node scripts/git-auto-push.mjs --once",
+    "trigger-content": "node scripts/trigger-content-workflow.mjs",
     "install-post-commit-push": "node scripts/install-post-commit-push.mjs"
   }
 }
