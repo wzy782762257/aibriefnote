@@ -134,6 +134,7 @@ function renderDigest(items) {
             <h2><a href="${escapeHtml(item.link)}" rel="nofollow noopener">${escapeHtml(item.title)}</a></h2>
             <p>${escapeHtml(item.summary || "暂无摘要。")}</p>
             <p><strong>编辑判断：</strong>${escapeHtml(makeTakeaway(item))}</p>
+            <p><strong>可执行观察：</strong>${escapeHtml(makeActionNote(item))}</p>
           </article>`).join("\n");
 
   return `<!doctype html>
@@ -157,6 +158,8 @@ function renderDigest(items) {
       <nav class="nav" aria-label="主导航">
         <a href="/#guides">指南</a>
         <a href="/articles/">简报</a>
+        <a href="/about.html">关于</a>
+        <a href="/contact.html">联系</a>
         <a href="/privacy.html">隐私</a>
       </nav>
     </header>
@@ -167,18 +170,17 @@ function renderDigest(items) {
           <h1>${today} AI 工具与搜索简报</h1>
         </div>
         <div class="prose">
-          <p>本页由自动化脚本整理公开来源生成，保留原文链接，并加入简短编辑判断。内容用于帮助读者快速发现 AI 工具、搜索和网站运营相关更新。</p>
-        </div>
-        <div class="ad-inline">
-          <span>Advertisement</span>
-          <p>广告位由 Google AdSense 自动广告控制。</p>
+          <p>本页由自动化脚本整理公开来源生成，保留原文链接，并加入简短编辑判断和可执行观察。内容目标是帮助读者快速判断哪些 AI、搜索和网站运营更新值得继续跟进。</p>
+          <p>简报只摘录公开来源的标题、链接和短摘要，不复制全文；站点会保留来源名称，便于读者回到原文核对细节。</p>
         </div>
 ${rows}
       </article>
     </main>
     <footer class="site-footer">
-      <p>© 2026 ${siteName}. Automated brief with source links.</p>
+      <p>© 2026 ${siteName}. 内容整理自公开来源，并附原文链接与编辑判断。</p>
       <div>
+        <a href="/about.html">关于</a>
+        <a href="/contact.html">联系</a>
         <a href="/privacy.html">隐私政策</a>
         <a href="/ads.txt">ads.txt</a>
         <a href="/sitemap.xml">Sitemap</a>
@@ -200,6 +202,20 @@ function makeTakeaway(item) {
     return "这类基础设施更新可能影响静态站性能、安全和自动化部署。";
   }
   return "这条信息适合继续观察，并作为后续专题页的素材来源。";
+}
+
+function makeActionNote(item) {
+  const title = `${item.title} ${item.summary}`.toLowerCase();
+  if (item.category === "SEO" || /\b(search|seo|index|crawl|ranking|schema)\b/.test(title)) {
+    return "检查是否需要更新站点的标题结构、结构化数据、内链说明或 Search Console 监控项。";
+  }
+  if (item.category === "AI" || /\b(ai|model|chatgpt|openai|agent|agents)\b/.test(title)) {
+    return "记录产品变化、适用场景、价格或权限影响，再决定是否整理成独立教程。";
+  }
+  if (item.category === "Web" || /\b(cloudflare|web|dns|waf|cdn|vite|security|infrastructure)\b/.test(title)) {
+    return "评估它是否影响缓存、安全规则、构建工具、边缘部署或站点可用性。";
+  }
+  return "先归档来源和关键事实，等待更多信息后再扩展为专题内容。";
 }
 
 async function updateIndex(items) {
@@ -253,7 +269,7 @@ async function renderArticleIndex() {
   <body>
     <header class="site-header">
       <a class="brand" href="/" aria-label="${siteName} 首页"><span class="brand-mark" aria-hidden="true">A</span><span>${siteName}</span></a>
-      <nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/privacy.html">隐私</a></nav>
+      <nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/about.html">关于</a><a href="/contact.html">联系</a><a href="/privacy.html">隐私</a></nav>
     </header>
     <main>
       <section class="deep-dive">
@@ -276,6 +292,8 @@ async function updateSitemap() {
   const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html");
   const urls = [
     ["/", "weekly", "1.0"],
+    ["/about.html", "yearly", "0.4"],
+    ["/contact.html", "yearly", "0.4"],
     ["/privacy.html", "yearly", "0.3"],
     ["/articles/", "daily", "0.7"],
     ...files.map((file) => [`/articles/${file}`, "weekly", "0.6"])
