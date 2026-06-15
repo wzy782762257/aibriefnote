@@ -5,6 +5,7 @@ const root = process.cwd();
 const today = new Date().toISOString().slice(0, 10);
 const sourcesPath = path.join(root, "content", "sources.json");
 const articlesDir = path.join(root, "articles");
+const aiKeywords = /\b(ai|agent|agents|llm|rag|mcp|model|models|gemini|claude|codex|openai|chatgpt|anthropic|dify|langflow|ollama|diffusion|prompt|prompts|cursor|copilot)\b/i;
 
 const config = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
 const siteUrl = process.env.SITE_URL || config.site.url;
@@ -80,17 +81,58 @@ async function fetchFeed(feed) {
   return parseFeed(await response.text(), feed);
 }
 
+function isRelevantItem(item) {
+  if (item.category === "AI") return true;
+  return aiKeywords.test(`${item.title} ${item.summary} ${item.source}`);
+}
+
+async function fetchGithubRepos() {
+  const since = new Date();
+  since.setUTCDate(since.getUTCDate() - 7);
+  const sinceDate = since.toISOString().slice(0, 10);
+  const query = encodeURIComponent(`AI OR LLM OR agent OR rag OR mcp created:>=${sinceDate}`);
+  const response = await fetch(`https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=6`, {
+    headers: {
+      "Accept": "application/vnd.github+json",
+      "User-Agent": `${siteName}/1.0 (${siteUrl})`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub Search returned ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return (payload.items || []).map((repo) => ({
+    category: "GitHub",
+    link: repo.html_url,
+    published: repo.created_at,
+    source: `${repo.stargazers_count} stars`,
+    summary: repo.description || "近期新增并获得较高 star 的 AI 相关 GitHub 项目。",
+    title: repo.full_name
+  }));
+}
+
 async function loadItems() {
-  const batches = await Promise.allSettled(config.feeds.map(fetchFeed));
+  const batches = await Promise.allSettled([
+    fetchGithubRepos(),
+    ...config.feeds.map(fetchFeed)
+  ]);
+  const sources = [
+    { name: "GitHub Search" },
+    ...config.feeds
+  ];
   const failed = batches
-    .map((result, index) => ({ result, feed: config.feeds[index] }))
+    .map((result, index) => ({ result, feed: sources[index] }))
     .filter(({ result }) => result.status === "rejected");
 
   for (const { result, feed } of failed) {
     console.warn(`Feed failed: ${feed.name} - ${result.reason.message}`);
   }
 
-  const items = batches.flatMap((result) => result.status === "fulfilled" ? result.value : []);
+  const items = batches
+    .flatMap((result) => result.status === "fulfilled" ? result.value : [])
+    .filter(isRelevantItem);
 
   if (!items.length) {
     throw new Error("No live feed items were fetched. Refusing to publish fallback or seed content.");
