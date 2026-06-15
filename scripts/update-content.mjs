@@ -11,8 +11,19 @@ const config = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
 const siteUrl = process.env.SITE_URL || config.site.url;
 const siteName = config.site.name;
 const slug = `ai-brief-${today}`;
+const articlePath = path.join(articlesDir, `${slug}.html`);
 
 await fs.mkdir(articlesDir, { recursive: true });
+
+try {
+  const existingArticle = await fs.readFile(articlePath, "utf8");
+  if (existingArticle.includes("AI GitHub Radar")) {
+    console.log(`Curated article already exists for ${slug}; preserving committed content.`);
+    process.exit(0);
+  }
+} catch (error) {
+  if (error.code !== "ENOENT") throw error;
+}
 
 function decodeEntities(value) {
   return value
@@ -356,7 +367,7 @@ ${body}
 }
 
 const items = await loadItems();
-await fs.writeFile(path.join(articlesDir, `${slug}.html`), renderDigest(items));
+await fs.writeFile(articlePath, renderDigest(items));
 await updateIndex(items);
 await renderArticleIndex();
 await updateSitemap();
