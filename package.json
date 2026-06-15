@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "update-content": "node scripts/update-content.mjs",
-    "build": "node scripts/update-content.mjs && node scripts/validate-seo.mjs",
+    "build": "node scripts/validate-seo.mjs",
     "validate-seo": "node scripts/validate-seo.mjs",
     "validate-seo:live": "node scripts/validate-seo.mjs --live",
     "auto-push": "node scripts/git-auto-push.mjs --once",

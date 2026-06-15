@@ -13,7 +13,9 @@ function fail(message) {
 function publicPathForHtml(file) {
   const normalized = file.split(path.sep).join("/");
   if (normalized === "index.html") return "/";
-  if (normalized === "articles/index.html") return "/articles/";
+  if (normalized.endsWith("/index.html")) {
+    return `/${normalized.replace(/index\.html$/, "")}`;
+  }
   return `/${normalized.replace(/\.html$/, "")}`;
 }
 
