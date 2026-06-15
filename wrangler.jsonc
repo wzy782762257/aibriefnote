@@ -2,5 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "aibriefnote",
   "compatibility_date": "2026-06-15",
-  "pages_build_output_dir": "dist"
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "aibriefnote-db",
+      "database_id": "2116158a-36ce-4608-a426-50b2918a9dcf"
+    }
+  ]
 }
