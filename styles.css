@@ -104,9 +104,7 @@ main {
 
 .kicker,
 .meta,
-.ad-band span,
-.ad-box span,
-.ad-inline span {
+.note-inline span {
   margin: 0;
   color: var(--green);
   font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -265,9 +263,7 @@ h3 {
   font-weight: 700;
 }
 
-.ad-band,
-.ad-box,
-.ad-inline {
+.note-inline {
   border: 1px dashed #a9b8b0;
   border-radius: var(--radius);
   background: rgba(255, 253, 247, 0.72);
@@ -275,17 +271,7 @@ h3 {
   font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.ad-band {
-  display: grid;
-  gap: 10px;
-  min-height: 96px;
-  margin: 18px 0 54px;
-  padding: 18px 22px;
-}
-
-.ad-band p,
-.ad-box p,
-.ad-inline p {
+.note-inline p {
   margin: 0;
 }
 
@@ -405,16 +391,6 @@ h3 {
   font-size: 1.1rem;
 }
 
-.ad-box {
-  display: grid;
-  min-height: 260px;
-  align-content: start;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 18px;
-  text-align: center;
-}
-
 .tool-list {
   margin: 14px 0 0;
   padding-left: 20px;
@@ -508,7 +484,7 @@ h3 {
   font-weight: 700;
 }
 
-.ad-inline {
+.note-inline {
   margin: 24px 0;
   padding: 18px;
 }
