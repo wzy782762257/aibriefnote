@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const root = process.cwd();
+const rootArgIndex = process.argv.indexOf("--root");
+const root = rootArgIndex === -1 ? process.cwd() : path.resolve(process.cwd(), process.argv[rootArgIndex + 1]);
 const siteUrl = "https://aibriefnote.com";
 const live = process.argv.includes("--live");
 const errors = [];
@@ -15,6 +16,9 @@ function publicPathForHtml(file) {
   if (normalized === "index.html") return "/";
   if (normalized.endsWith("/index.html")) {
     return `/${normalized.replace(/index\.html$/, "")}`;
+  }
+  if (!normalized.includes("/")) {
+    return `/${normalized.replace(/\.html$/, "")}`;
   }
   return `/${normalized.replace(/\.html$/, "")}`;
 }

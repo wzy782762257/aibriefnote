@@ -5,13 +5,26 @@
   "type": "module",
   "scripts": {
     "update-content": "node scripts/update-content.mjs",
-    "build": "node scripts/validate-seo.mjs",
-    "validate-seo": "node scripts/validate-seo.mjs",
+    "build": "vite build && node scripts/validate-seo.mjs --root dist",
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "validate-seo": "node scripts/validate-seo.mjs --root dist",
     "validate-seo:live": "node scripts/validate-seo.mjs --live",
     "auto-push": "node scripts/git-auto-push.mjs --once",
     "watch-push": "node scripts/git-auto-push.mjs --watch",
     "deploy": "npm run build && node scripts/git-auto-push.mjs --once",
     "trigger-content": "node scripts/trigger-content-workflow.mjs",
     "install-post-commit-push": "node scripts/install-post-commit-push.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
   }
 }
