@@ -32,7 +32,7 @@ async function walk(dir) {
   const files = [];
 
   for (const entry of entries) {
-    if (entry.name === "node_modules" || entry.name === ".git") continue;
+    if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "dist") continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       files.push(...await walk(fullPath));
