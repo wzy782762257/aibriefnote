@@ -122,6 +122,10 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+function articleUrl(slugOrFile) {
+  return `/articles/${slugOrFile.replace(/\.html$/, "")}`;
+}
+
 function renderLinkItem([title, href, detail]) {
   return `          <article class="source-item">
             <p class="meta">AI News · Verified Source</p>
@@ -151,7 +155,7 @@ function renderBrief(brief) {
     <title>${siteName} | ${brief.date} AI GitHub 热榜与新闻简报</title>
     <meta name="description" content="${brief.date} AI GitHub 高星项目、agent 工具和近日日度 AI 新闻整理，附来源链接和编辑判断。">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <link rel="canonical" href="${siteUrl}/articles/${slug}.html">
+    <link rel="canonical" href="${siteUrl}${articleUrl(slug)}">
     <link rel="stylesheet" href="../styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}" crossorigin="anonymous"></script>
   </head>
@@ -164,9 +168,9 @@ function renderBrief(brief) {
       <nav class="nav" aria-label="主导航">
         <a href="/#guides">指南</a>
         <a href="/articles/">简报</a>
-        <a href="/about.html">关于</a>
-        <a href="/contact.html">联系</a>
-        <a href="/privacy.html">隐私</a>
+        <a href="/about">关于</a>
+        <a href="/contact">联系</a>
+        <a href="/privacy">隐私</a>
       </nav>
     </header>
     <main>
@@ -196,9 +200,9 @@ ${news}
     <footer class="site-footer">
       <p>© 2026 ${siteName}. 内容整理自公开来源，并附原文链接与编辑判断。</p>
       <div>
-        <a href="/about.html">关于</a>
-        <a href="/contact.html">联系</a>
-        <a href="/privacy.html">隐私政策</a>
+        <a href="/about">关于</a>
+        <a href="/contact">联系</a>
+        <a href="/privacy">隐私政策</a>
         <a href="/ads.txt">ads.txt</a>
         <a href="/sitemap.xml">Sitemap</a>
       </div>
@@ -208,9 +212,10 @@ ${news}
 }
 
 function articleCard(brief) {
+  const slug = `ai-brief-${brief.date}`;
   return `            <article class="article-card">
               <p class="meta">AI GitHub Radar · ${brief.date}</p>
-              <h3><a href="/articles/ai-brief-${brief.date}.html">${brief.date} AI GitHub 热榜与新闻简报</a></h3>
+              <h3><a href="${articleUrl(slug)}">${brief.date} AI GitHub 热榜与新闻简报</a></h3>
               <p>${escapeHtml(brief.headline)}</p>
             </article>`;
 }
@@ -226,7 +231,7 @@ function homepageCard([name, href, stars, detail]) {
 async function updateHome(latest) {
   const indexPath = path.join(root, "index.html");
   let html = await fs.readFile(indexPath, "utf8");
-  const latestHref = `articles/ai-brief-${latest.date}.html`;
+  const latestHref = articleUrl(`ai-brief-${latest.date}`);
   const feature = `          <article class="feature-card">
             <div class="article-visual visual-indexing" aria-hidden="true">
               <span></span><span></span><span></span>
@@ -261,7 +266,7 @@ async function updateArticleIndex() {
         const title = file === "ai-brief-2026-06-08.html" ? `${date} 公开来源记录` : `${date} AI 工具与搜索简报`;
         return `            <article class="article-card">
               <p class="meta">Daily Brief · ${date}</p>
-              <h3><a href="/articles/${file}">${title}</a></h3>
+              <h3><a href="${articleUrl(file)}">${title}</a></h3>
               <p>自动整理公开来源，并保留原文链接与编辑判断。</p>
             </article>`;
       })
@@ -280,7 +285,7 @@ async function updateArticleIndex() {
   <body>
     <header class="site-header">
       <a class="brand" href="/" aria-label="${siteName} 首页"><span class="brand-mark" aria-hidden="true">A</span><span>${siteName}</span></a>
-      <nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/about.html">关于</a><a href="/contact.html">联系</a><a href="/privacy.html">隐私</a></nav>
+      <nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/about">关于</a><a href="/contact">联系</a><a href="/privacy">隐私</a></nav>
     </header>
     <main>
       <section class="deep-dive">
@@ -303,11 +308,11 @@ async function updateSitemap() {
   const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html").sort();
   const urls = [
     ["/", "weekly", "1.0"],
-    ["/about.html", "yearly", "0.4"],
-    ["/contact.html", "yearly", "0.4"],
-    ["/privacy.html", "yearly", "0.3"],
+    ["/about", "yearly", "0.4"],
+    ["/contact", "yearly", "0.4"],
+    ["/privacy", "yearly", "0.3"],
     ["/articles/", "daily", "0.7"],
-    ...files.map((file) => [`/articles/${file}`, "weekly", "0.6"])
+    ...files.map((file) => [articleUrl(file.replace(/\.html$/, "")), "weekly", "0.6"])
   ];
   const body = urls.map(([url, freq, priority]) => `  <url>
     <loc>${siteUrl}${url}</loc>
