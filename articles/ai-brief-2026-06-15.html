@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI Brief Note | 2026-06-15 AI GitHub 热榜与新闻简报</title>
-    <meta name="description" content="2026-06-15 AI GitHub 高星项目、agent 工具和近日日度 AI 新闻整理，附来源链接和编辑判断。">
+    <title>AI Brief Note | AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门</title>
+    <meta name="description" content="面向个人站长和小团队的 AI 自动化工具选型教程：什么时候用 n8n、Dify、Langflow、Open WebUI 和 Gemini CLI，以及第一条工作流如何搭建。">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="https://aibriefnote.com/articles/ai-brief-2026-06-15">
     <link rel="stylesheet" href="../styles.css">
@@ -18,81 +18,133 @@
       </a>
       <nav class="nav" aria-label="主导航">
         <a href="/#guides">指南</a>
-        <a href="/articles/">简报</a>
+        <a href="/articles/">教程</a>
         <a href="/about">关于</a>
         <a href="/contact">联系</a>
         <a href="/privacy">隐私</a>
       </nav>
     </header>
     <main>
-      <article class="deep-dive">
+      <article class="deep-dive guide-page">
         <div class="section-heading">
-          <p class="kicker">AI GitHub Radar</p>
-          <h1>2026-06-15 AI GitHub 热榜与新闻简报</h1>
+          <p class="kicker">AI Automation Guide</p>
+          <h1>AI 自动化工具怎么选：从 n8n、Dify、Langflow 到 Open WebUI</h1>
         </div>
+
+        <div class="guide-summary">
+          <p><strong>适合谁：</strong>想把 AI 接进内容采集、客服问答、资料整理、表格处理或内部知识库的小团队。</p>
+          <p><strong>先给结论：</strong>要做业务流程自动化先看 n8n；要做可上线的聊天应用看 Dify；要实验 agent 或 RAG 流程看 Langflow；要本地统一管理模型和对话界面看 Open WebUI；开发者想在终端里处理代码和文件再看 Gemini CLI。</p>
+        </div>
+
         <div class="prose">
-          <p><strong>今日主线：</strong>高星 AI 仓库更新活跃，agent 平台进入应用整合期</p>
-          <p>截至 6 月 15 日，GitHub 高星 AI 仓库活跃更新集中在个人助手、工作流自动化、agent 平台、Dify/Langflow/Open WebUI 和 Gemini CLI。</p>
-          <p><strong>编辑判断：</strong>今天的重点不是追单点模型，而是把高星平台拆成可执行工作流：自动化、agent 编排、本地 UI、终端助手。</p>
-          <p>GitHub star 数为抓取时快照，后续可能变化；新闻条目优先保留官方、原文或社区讨论链接，便于回到来源核对。</p>
+          <p>很多 AI 工具页面只列一串 GitHub 链接，读者看完仍然不知道该装哪个、用在哪、第一步怎么开始。下面这份指南把工具按真实使用场景拆开，目标是让你当天就能搭出一条可验证的小工作流。</p>
+
+          <h2>一、先按任务选择工具</h2>
+          <div class="table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>你要解决的问题</th>
+                  <th>优先工具</th>
+                  <th>为什么</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>把 RSS、表格、邮件、Webhook 串起来</td>
+                  <td>n8n</td>
+                  <td>节点多，适合做“触发器 + 多步骤处理 + 通知”的自动化流程。</td>
+                </tr>
+                <tr>
+                  <td>做一个可分享的 AI 问答或客服应用</td>
+                  <td>Dify</td>
+                  <td>应用、提示词、知识库、日志和发布链路更完整。</td>
+                </tr>
+                <tr>
+                  <td>快速实验 RAG、agent 和多模型流程</td>
+                  <td>Langflow</td>
+                  <td>可视化搭建组件，适合先验证流程，再决定是否工程化。</td>
+                </tr>
+                <tr>
+                  <td>在本地统一管理 Ollama、OpenAI API 等模型入口</td>
+                  <td>Open WebUI</td>
+                  <td>更像一个私有 AI 控制台，适合团队内部试用和沉淀提示词。</td>
+                </tr>
+                <tr>
+                  <td>开发者在终端里让 AI 帮忙读文件、改代码、跑命令</td>
+                  <td>Gemini CLI</td>
+                  <td>入口在命令行，适合技术用户，不适合作为普通业务后台。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>二、第一条工作流建议这样做</h2>
+          <ol class="steps-list">
+            <li><strong>选一个低风险任务。</strong>不要一开始就让 AI 自动发文章或自动回复客户。先做“收集资料并生成草稿摘要”。</li>
+            <li><strong>准备输入源。</strong>可以是 RSS、Google Sheet、表单、邮箱、Webhook 或手动上传的文档。</li>
+            <li><strong>加一个 AI 处理节点。</strong>让模型只输出结构化字段，例如标题、摘要、标签、风险提醒和原文链接。</li>
+            <li><strong>把结果写到可审核的位置。</strong>优先写入表格、Notion、飞书或后台草稿，不要直接发布。</li>
+            <li><strong>保留来源和人工审核。</strong>任何需要对外展示的内容，都要保留原链接，并经过人工改写和事实核对。</li>
+          </ol>
+
+          <div class="ad-inline">
+            <span>Practical workflow</span>
+            <p>如果你是内容站，可以先做“抓取来源 -> AI 提取要点 -> 写入草稿表 -> 人工编辑 -> 发布教程”的流程。这样 AI 负责整理，页面仍然由人来决定结构、取舍和表达。</p>
+          </div>
+
+          <h2>三、各工具的入门路径</h2>
+
+          <section class="tool-guide">
+            <h3>n8n：适合先搭自动化骨架</h3>
+            <p>n8n 适合把不同服务串起来，例如每天抓取来源、调用 AI 摘要、写入表格、给自己发审核提醒。个人项目可以先用 Docker 或官方云服务，不要一开始就追求复杂部署。</p>
+            <p><strong>入门任务：</strong>创建一个定时触发流程，读取 3 个 RSS 来源，把标题、链接和摘要写入一张表。确认稳定后，再接入 AI 节点做分类。</p>
+            <p><a class="resource-link" href="https://github.com/n8n-io/n8n" target="_blank" rel="nofollow noopener">查看 n8n GitHub 仓库</a></p>
+          </section>
+
+          <section class="tool-guide">
+            <h3>Dify：适合做可上线的 AI 应用</h3>
+            <p>Dify 更适合做“用户能访问的 AI 应用”，例如站内问答、资料库问答、客服助手、内容生成后台。它比单纯 workflow 工具更关注应用发布、知识库和日志。</p>
+            <p><strong>入门任务：</strong>上传一组你自己的文档，创建一个知识库问答应用，先限制回答必须引用资料来源，再给内部成员试用。</p>
+            <p><a class="resource-link" href="https://github.com/langgenius/dify" target="_blank" rel="nofollow noopener">查看 Dify GitHub 仓库</a></p>
+          </section>
+
+          <section class="tool-guide">
+            <h3>Langflow：适合验证 RAG 和 agent 流程</h3>
+            <p>Langflow 的价值在于快速试错。你可以把模型、向量库、提示词、工具调用这些组件拖出来，先验证一个想法是否跑得通，再决定是否交给开发者重写成稳定服务。</p>
+            <p><strong>入门任务：</strong>做一个“上传文档 -> 切分 -> 检索 -> 回答”的最小 RAG demo，观察召回内容是否准确，而不是先追求界面好看。</p>
+            <p><a class="resource-link" href="https://github.com/langflow-ai/langflow" target="_blank" rel="nofollow noopener">查看 Langflow GitHub 仓库</a></p>
+          </section>
+
+          <section class="tool-guide">
+            <h3>Open WebUI：适合本地模型和团队试用</h3>
+            <p>Open WebUI 更像一个私有聊天入口。它适合连接 Ollama 或云端模型，让团队在统一界面里试提示词、保存对话、比较模型效果。</p>
+            <p><strong>入门任务：</strong>先在本机跑一个轻量模型，连接 Open WebUI，用同一组问题比较本地模型和云端模型的回答质量。</p>
+            <p><a class="resource-link" href="https://github.com/open-webui/open-webui" target="_blank" rel="nofollow noopener">查看 Open WebUI GitHub 仓库</a></p>
+          </section>
+
+          <section class="tool-guide">
+            <h3>Gemini CLI：适合开发者，不适合直接给普通用户</h3>
+            <p>Gemini CLI 的使用场景是终端和代码仓库。它适合让开发者分析文件、解释代码、生成脚本或处理本地任务，但不应该被包装成普通用户的内容页面主角。</p>
+            <p><strong>入门任务：</strong>在一个测试仓库里让 CLI 读取 README、列出项目结构、生成一个不改动业务逻辑的小脚本。先验证权限边界，再用于真实项目。</p>
+            <p><a class="resource-link" href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="nofollow noopener">查看 Gemini CLI GitHub 仓库</a></p>
+          </section>
+
+          <h2>四、上线前的质量检查</h2>
+          <ul>
+            <li>页面要回答一个明确问题，不要把采集结果直接贴给用户。</li>
+            <li>每个外部工具最多保留一个官方入口，链接只是补充，不是正文。</li>
+            <li>不要展示未核对的热度指标、内部采集信息、失败日志或后台工作语言。</li>
+            <li>教程必须有适用人群、使用步骤、风险提醒和下一步动作。</li>
+            <li>如果内容来自 AI 辅助整理，发布前必须人工核对名称、链接、安装方式和是否仍在维护。</li>
+          </ul>
+
+          <p>这类页面真正能带来曝光和点击的原因，不是“列了很多热门项目”，而是读者搜索一个问题后，能在页面里快速判断自己该用什么、怎么开始、哪里容易踩坑。</p>
         </div>
-        <div class="section-heading">
-          <p class="kicker">GitHub</p>
-          <h2>高热 AI 项目</h2>
-        </div>
-          <article class="source-item">
-            <p class="meta">GitHub · 378721 stars when collected</p>
-            <h2><a href="https://github.com/openclaw/openclaw" rel="nofollow noopener">openclaw/openclaw</a></h2>
-            <p>个人 AI assistant，高星且近期更新活跃，说明通用个人助手仍是流量入口。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">GitHub · 193575 stars when collected</p>
-            <h2><a href="https://github.com/NousResearch/hermes-agent" rel="nofollow noopener">NousResearch/hermes-agent</a></h2>
-            <p>会随用户成长的 agent 项目，适合观察长期记忆与个人化 agent 方向。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">GitHub · 192535 stars when collected</p>
-            <h2><a href="https://github.com/n8n-io/n8n" rel="nofollow noopener">n8n-io/n8n</a></h2>
-            <p>带原生 AI 能力的工作流自动化平台，连接业务工具和 agent 执行链。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">GitHub · 149669 stars when collected</p>
-            <h2><a href="https://github.com/langflow-ai/langflow" rel="nofollow noopener">langflow-ai/langflow</a></h2>
-            <p>用于构建和部署 AI agents/workflows 的可视化平台。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">GitHub · 145210 stars when collected</p>
-            <h2><a href="https://github.com/langgenius/dify" rel="nofollow noopener">langgenius/dify</a></h2>
-            <p>生产级 agentic workflow 平台，适合低代码 AI 应用落地。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">GitHub · 105277 stars when collected</p>
-            <h2><a href="https://github.com/google-gemini/gemini-cli" rel="nofollow noopener">google-gemini/gemini-cli</a></h2>
-            <p>把 Gemini 带到终端的开源 AI agent，命令行入口竞争继续升温。</p>
-          </article>
-        <div class="section-heading">
-          <p class="kicker">News</p>
-          <h2>近日日度 AI 新闻</h2>
-        </div>
-          <article class="source-item">
-            <p class="meta">AI News · Verified Source</p>
-            <h2><a href="https://gabrielweinberg.com/p/people-are-consuming-ai-like-they" rel="nofollow noopener">Not everyone is using AI for everything</a></h2>
-            <p>Hacker News 热门讨论，抓取时约 425 points，提醒内容选题不要假设所有用户都在高频使用 AI。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">AI News · Verified Source</p>
-            <h2><a href="https://news.sky.com/story/derbyshire-police-officer-investigated-for-using-ai-to-create-evidence-in-multiple-cases-13553661" rel="nofollow noopener">Police officer investigated for using AI to create evidence</a></h2>
-            <p>AI 生成证据争议进入公共治理语境，适合写 AI 风险和合规提醒。</p>
-          </article>
-          <article class="source-item">
-            <p class="meta">AI News · Verified Source</p>
-            <h2><a href="https://the-decoder.com/kpmg-fabricated-ai-case-studies-in-a-report-designed-to-sell-clients-on-ai-adoption/" rel="nofollow noopener">KPMG fabricated AI case studies</a></h2>
-            <p>AI 营销材料真实性被质疑，内容站应坚持来源、链接和事实边界。</p>
-          </article>
       </article>
     </main>
     <footer class="site-footer">
-      <p>© 2026 AI Brief Note. 内容整理自公开来源，并附原文链接与编辑判断。</p>
+      <p>© 2026 AI Brief Note. 内容面向真实使用场景整理，外部链接仅作为资料来源。</p>
       <div>
         <a href="/about">关于</a>
         <a href="/contact">联系</a>

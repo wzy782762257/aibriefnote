@@ -7,6 +7,7 @@ const siteName = "AI Brief Note";
 const siteUrl = "https://aibriefnote.com";
 const publisherId = "ca-pub-6929744420910509";
 const updated = "2026-06-15";
+const manualGuideDate = "2026-06-15";
 
 const briefs = [
   {
@@ -95,8 +96,8 @@ const briefs = [
   },
   {
     date: "2026-06-15",
-    headline: "高星 AI 仓库更新活跃，agent 平台进入应用整合期",
-    summary: "截至 6 月 15 日，GitHub 高星 AI 仓库活跃更新集中在个人助手、工作流自动化、agent 平台、Dify/Langflow/Open WebUI 和 Gemini CLI。",
+    headline: "AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门",
+    summary: "按真实任务拆解 AI 自动化工具的选择、第一条工作流和上线前质量检查。",
     repos: [
       ["openclaw/openclaw", "https://github.com/openclaw/openclaw", 378721, "个人 AI assistant，高星且近期更新活跃，说明通用个人助手仍是流量入口。"],
       ["NousResearch/hermes-agent", "https://github.com/NousResearch/hermes-agent", 193575, "会随用户成长的 agent 项目，适合观察长期记忆与个人化 agent 方向。"],
@@ -124,6 +125,22 @@ function escapeHtml(value) {
 
 function articleUrl(slugOrFile) {
   return `/articles/${slugOrFile.replace(/\.html$/, "")}`;
+}
+
+function isManualGuide(brief) {
+  return brief.date === manualGuideDate;
+}
+
+function articleMeta(brief) {
+  return isManualGuide(brief) ? `AI Automation Guide · ${brief.date}` : `AI GitHub Radar · ${brief.date}`;
+}
+
+function articleTitle(brief) {
+  return isManualGuide(brief) ? brief.headline : `${brief.date} AI GitHub 热榜与新闻简报`;
+}
+
+function articleSummary(brief) {
+  return isManualGuide(brief) ? brief.summary : brief.headline;
 }
 
 function renderLinkItem([title, href, detail]) {
@@ -154,7 +171,7 @@ function renderBrief(brief) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${siteName} | ${brief.date} AI GitHub 热榜与新闻简报</title>
     <meta name="description" content="${brief.date} AI GitHub 高星项目、agent 工具和近日日度 AI 新闻整理，附来源链接和编辑判断。">
-    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="robots" content="noindex,follow">
     <link rel="canonical" href="${siteUrl}${articleUrl(slug)}">
     <link rel="stylesheet" href="../styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}" crossorigin="anonymous"></script>
@@ -214,9 +231,9 @@ ${news}
 function articleCard(brief) {
   const slug = `ai-brief-${brief.date}`;
   return `            <article class="article-card">
-              <p class="meta">AI GitHub Radar · ${brief.date}</p>
-              <h3><a href="${articleUrl(slug)}">${brief.date} AI GitHub 热榜与新闻简报</a></h3>
-              <p>${escapeHtml(brief.headline)}</p>
+              <p class="meta">${articleMeta(brief)}</p>
+              <h3><a href="${articleUrl(slug)}">${escapeHtml(articleTitle(brief))}</a></h3>
+              <p>${escapeHtml(articleSummary(brief))}</p>
             </article>`;
 }
 
@@ -228,21 +245,41 @@ function homepageCard([name, href, stars, detail]) {
             </article>`;
 }
 
+function homepageGuideCards() {
+  const cards = [
+    ["Workflow", "n8n 适合做什么", "把 RSS、表格、Webhook 和 AI 节点串成可审核的内容流程。"],
+    ["AI App", "Dify 适合做什么", "把知识库、提示词、日志和发布入口组合成可试用的 AI 应用。"],
+    ["RAG Demo", "Langflow 适合做什么", "先用可视化流程验证检索、提示词和模型组合是否跑得通。"],
+    ["Local AI", "Open WebUI 适合做什么", "给本地模型和云端模型一个统一入口，方便团队内部比较效果。"]
+  ];
+
+  return cards.map(([meta, title, body]) => `            <article class="article-card">
+              <p class="meta">${meta}</p>
+              <h3><a href="/articles/ai-brief-2026-06-15">${title}</a></h3>
+              <p>${body}</p>
+            </article>`).join("\n");
+}
+
 async function updateHome(latest) {
   const indexPath = path.join(root, "index.html");
   let html = await fs.readFile(indexPath, "utf8");
   const latestHref = articleUrl(`ai-brief-${latest.date}`);
+  const latestMeta = isManualGuide(latest) ? "AI Automation Guide" : "AI GitHub Radar · 热点补刊";
+  const latestTitle = articleTitle(latest);
+  const latestDescription = isManualGuide(latest)
+    ? "从真实任务出发，说明什么时候用 workflow、什么时候做 AI 应用、什么时候只需要本地模型界面。"
+    : `${escapeHtml(latest.headline)}。重点跟踪高星 AI 仓库、agent 工具和近日日度 AI 新闻。`;
   const feature = `          <article class="feature-card">
             <div class="article-visual visual-indexing" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
             <div>
-              <p class="meta">AI GitHub Radar · 热点补刊</p>
-              <h3><a href="${latestHref}">${latest.date} AI GitHub 热榜与新闻简报</a></h3>
-              <p>${escapeHtml(latest.headline)}。重点跟踪高星 AI 仓库、agent 工具和近日日度 AI 新闻。</p>
+              <p class="meta">${latestMeta}</p>
+              <h3><a href="${latestHref}">${escapeHtml(latestTitle)}</a></h3>
+              <p>${latestDescription}</p>
             </div>
           </article>`;
-  const cards = latest.repos.slice(0, 4).map(homepageCard).join("\n");
+  const cards = isManualGuide(latest) ? homepageGuideCards() : latest.repos.slice(0, 4).map(homepageCard).join("\n");
 
   html = html
     .replace(/          <article class="feature-card">[\s\S]*?          <\/article>/, feature)
@@ -257,9 +294,18 @@ async function updateArticleIndex() {
     .sort()
     .reverse();
   const curatedDates = new Set(briefs.map((brief) => brief.date));
+  const indexableExistingFiles = [];
+
+  for (const file of existingFiles) {
+    const html = await fs.readFile(path.join(articlesDir, file), "utf8");
+    if (!html.includes('content="noindex,follow"')) {
+      indexableExistingFiles.push(file);
+    }
+  }
+
   const cards = [
-    ...briefs.slice().reverse().map(articleCard),
-    ...existingFiles
+    ...briefs.slice().reverse().filter(isManualGuide).map(articleCard),
+    ...indexableExistingFiles
       .filter((file) => !curatedDates.has(file.match(/(\d{4}-\d{2}-\d{2})/)?.[1]))
       .map((file) => {
         const date = file.match(/(\d{4}-\d{2}-\d{2})/)?.[1] || file.replace(".html", "");
@@ -267,7 +313,7 @@ async function updateArticleIndex() {
         return `            <article class="article-card">
               <p class="meta">Daily Brief · ${date}</p>
               <h3><a href="${articleUrl(file)}">${title}</a></h3>
-              <p>自动整理公开来源，并保留原文链接与编辑判断。</p>
+              <p>已完成整理和人工筛选的教程内容。</p>
             </article>`;
       })
   ].join("\n");
@@ -277,8 +323,8 @@ async function updateArticleIndex() {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${siteName} | 每日简报</title>
-    <meta name="description" content="${siteName} 的 AI GitHub 热榜、AI 新闻和每日简报归档。">
+    <title>${siteName} | 教程归档</title>
+    <meta name="description" content="${siteName} 的 AI 工具教程、自动化工作流和内容运营指南归档。">
     <link rel="canonical" href="${siteUrl}/articles/">
     <link rel="stylesheet" href="../styles.css">
   </head>
@@ -291,7 +337,7 @@ async function updateArticleIndex() {
       <section class="deep-dive">
         <div class="section-heading">
           <p class="kicker">Archive</p>
-          <h1>每日简报归档</h1>
+          <h1>教程归档</h1>
         </div>
         <div class="article-grid">
 ${cards}
@@ -305,14 +351,25 @@ ${cards}
 }
 
 async function updateSitemap() {
-  const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html").sort();
+  const files = (await fs.readdir(articlesDir))
+    .filter((file) => file.endsWith(".html") && file !== "index.html")
+    .sort();
+  const indexableFiles = [];
+
+  for (const file of files) {
+    const html = await fs.readFile(path.join(articlesDir, file), "utf8");
+    if (!html.includes('content="noindex,follow"')) {
+      indexableFiles.push(file);
+    }
+  }
+
   const urls = [
     ["/", "weekly", "1.0"],
     ["/about", "yearly", "0.4"],
     ["/contact", "yearly", "0.4"],
     ["/privacy", "yearly", "0.3"],
     ["/articles/", "daily", "0.7"],
-    ...files.map((file) => [articleUrl(file.replace(/\.html$/, "")), "weekly", "0.6"])
+    ...indexableFiles.map((file) => [articleUrl(file.replace(/\.html$/, "")), "weekly", "0.6"])
   ];
   const body = urls.map(([url, freq, priority]) => `  <url>
     <loc>${siteUrl}${url}</loc>
@@ -330,6 +387,7 @@ ${body}
 
 await fs.mkdir(articlesDir, { recursive: true });
 for (const brief of briefs) {
+  if (isManualGuide(brief)) continue;
   await fs.writeFile(path.join(articlesDir, `ai-brief-${brief.date}.html`), renderBrief(brief));
 }
 await updateHome(briefs.at(-1));

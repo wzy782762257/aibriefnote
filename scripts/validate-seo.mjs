@@ -46,6 +46,10 @@ function extractCanonical(html) {
   return html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1] || "";
 }
 
+function isNoindex(html) {
+  return /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html);
+}
+
 function isLocalHref(href) {
   return !/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(href)
     && !href.startsWith("mailto:")
@@ -66,8 +70,11 @@ for (const file of htmlFiles) {
   const route = publicPathForHtml(file);
   const expectedCanonical = `${siteUrl}${route}`;
   const canonical = extractCanonical(html);
+  const noindex = isNoindex(html);
 
-  expectedLocs.add(expectedCanonical);
+  if (!noindex) {
+    expectedLocs.add(expectedCanonical);
+  }
 
   if (canonical !== expectedCanonical) {
     fail(`${file}: canonical should be ${expectedCanonical}, found ${canonical || "missing"}`);

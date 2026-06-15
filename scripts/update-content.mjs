@@ -17,8 +17,8 @@ await fs.mkdir(articlesDir, { recursive: true });
 
 try {
   const existingArticle = await fs.readFile(articlePath, "utf8");
-  if (existingArticle.includes("AI GitHub Radar")) {
-    console.log(`Curated article already exists for ${slug}; preserving committed content.`);
+  if (existingArticle.includes("<article")) {
+    console.log(`Article already exists for ${slug}; preserving committed content.`);
     process.exit(0);
   }
 } catch (error) {
@@ -201,7 +201,7 @@ function renderDigest(items) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${siteName} | ${today} AI 工具与搜索简报</title>
     <meta name="description" content="${today} AI 工具、搜索、SEO 与 Web 基础设施简报，自动整理公开来源并附编辑判断。">
-    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="robots" content="noindex,follow">
     <link rel="canonical" href="${siteUrl}${articleUrl(slug)}">
     <link rel="stylesheet" href="../styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${config.site.publisherId}" crossorigin="anonymous"></script>
@@ -301,7 +301,16 @@ async function updateIndex(items) {
 
 async function renderArticleIndex() {
   const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html").sort().reverse();
-  const cards = files.map((file) => {
+  const indexableFiles = [];
+
+  for (const file of files) {
+    const html = await fs.readFile(path.join(articlesDir, file), "utf8");
+    if (!html.includes('content="noindex,follow"')) {
+      indexableFiles.push(file);
+    }
+  }
+
+  const cards = indexableFiles.map((file) => {
     const date = file.match(/(\d{4}-\d{2}-\d{2})/)?.[1] || file.replace(".html", "");
     const isSourceRecord = file === "ai-brief-2026-06-08.html";
     const title = isSourceRecord ? `${date} 公开来源记录` : `${date} AI 工具与搜索简报`;
@@ -318,8 +327,8 @@ async function renderArticleIndex() {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${siteName} | 每日简报</title>
-    <meta name="description" content="${siteName} 的每日 AI 工具与搜索简报归档。">
+    <title>${siteName} | 教程归档</title>
+    <meta name="description" content="${siteName} 的 AI 工具教程、自动化工作流和内容运营指南归档。">
     <link rel="canonical" href="${siteUrl}/articles/">
     <link rel="stylesheet" href="../styles.css">
   </head>
@@ -332,7 +341,7 @@ async function renderArticleIndex() {
       <section class="deep-dive">
         <div class="section-heading">
           <p class="kicker">Archive</p>
-          <h1>每日简报归档</h1>
+          <h1>教程归档</h1>
         </div>
         <div class="article-grid">
 ${cards}
@@ -347,13 +356,22 @@ ${cards}
 
 async function updateSitemap() {
   const files = (await fs.readdir(articlesDir)).filter((file) => file.endsWith(".html") && file !== "index.html");
+  const indexableFiles = [];
+
+  for (const file of files) {
+    const html = await fs.readFile(path.join(articlesDir, file), "utf8");
+    if (!html.includes('content="noindex,follow"')) {
+      indexableFiles.push(file);
+    }
+  }
+
   const urls = [
     ["/", "weekly", "1.0"],
     ["/about", "yearly", "0.4"],
     ["/contact", "yearly", "0.4"],
     ["/privacy", "yearly", "0.3"],
     ["/articles/", "daily", "0.7"],
-    ...files.map((file) => [articleUrl(file), "weekly", "0.6"])
+    ...indexableFiles.map((file) => [articleUrl(file), "weekly", "0.6"])
   ];
 
   const body = urls.map(([url, freq, priority]) => `  <url>
