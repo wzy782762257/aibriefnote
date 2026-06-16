@@ -11,7 +11,6 @@ export default defineConfig({
       input: {
         home: resolve(__dirname, "index.html"),
         sites: resolve(__dirname, "sites/index.html"),
-        workflows: resolve(__dirname, "workflows/index.html"),
         updates: resolve(__dirname, "updates/index.html"),
         articles: resolve(__dirname, "articles/index.html"),
         guide: resolve(__dirname, "articles/ai-brief-2026-06-15.html"),

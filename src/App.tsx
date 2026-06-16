@@ -53,10 +53,6 @@ function HomePage() {
           body="站点卡片来自数据库，状态和分类会随每日维护更新。"
           action={{ href: "/sites/", label: "查看全部" }}
         />
-        <form className="directory-search" action="/sites/">
-          <input name="q" type="search" placeholder="搜索 AI 工具、场景或分类，例如：知识库问答、图片生成、自动化" autoComplete="off" />
-          <button className="button primary" type="submit">搜索</button>
-        </form>
         <SitesGrid featured limit={6} />
       </section>
     </>

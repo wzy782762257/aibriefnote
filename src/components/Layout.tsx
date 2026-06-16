@@ -15,6 +15,16 @@ export function Layout({ children }: { children: ReactNode }) {
           <span className="brand-mark" aria-hidden="true">A</span>
           <span>AI Brief Note</span>
         </a>
+        <form className="header-search" action="/sites/" role="search">
+          <input
+            name="q"
+            type="search"
+            placeholder="搜索 AI 工具、场景或分类"
+            aria-label="搜索 AI 工具、场景或分类"
+            autoComplete="off"
+          />
+          <button type="submit">搜索</button>
+        </form>
         <nav className="nav" aria-label="主导航">
           {navItems.map(([label, href]) => (
             <a key={href} href={href}>{label}</a>
