@@ -132,19 +132,21 @@ function UpdatesPage() {
 
 function ArticlesPage() {
   return (
-    <section className="deep-dive">
-      <div className="section-heading">
-        <p className="kicker">Archive</p>
+    <>
+      <section className="page-title">
+        <p className="eyebrow">Archive</p>
         <h1>教程归档</h1>
-      </div>
+        <p>围绕真实工具选择、搭建步骤和上线检查整理的教程文章。</p>
+      </section>
       <div className="article-grid">
         <article className="article-card">
           <p className="meta">AI Automation Guide · 2026-06-15</p>
           <h3><a href="/articles/ai-brief-2026-06-15">AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门</a></h3>
           <p>按真实任务拆解 AI 自动化工具的选择、第一条工作流和上线前质量检查。</p>
+          <a className="article-link" href="/articles/ai-brief-2026-06-15">阅读教程</a>
         </article>
       </div>
-    </section>
+    </>
   );
 }
 
