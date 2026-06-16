@@ -4,7 +4,6 @@ const navItems = [
   ["首页", "/"],
   ["AI站点导航", "/sites/"],
   ["工具教程", "/articles/"],
-  ["工作流模板", "/workflows/"],
   ["每日更新", "/updates/"]
 ];
 
@@ -25,7 +24,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </header>
       <main>{children}</main>
       <footer className="site-footer">
-        <p>© 2026 AI Brief Note. AI 工具导航、教程和工作流模板。</p>
+        <p>© 2026 AI Brief Note. AI 工具导航和实用教程。</p>
         <div>
           <a href="/about">关于</a>
           <a href="/contact">联系</a>

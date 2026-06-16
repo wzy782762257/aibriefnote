@@ -263,6 +263,7 @@ h3 {
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
+.hero-actions,
 .quick-actions,
 .chip-row,
 .tool-meta,
@@ -272,6 +273,7 @@ h3 {
   gap: 10px;
 }
 
+.hero-actions,
 .quick-actions {
   margin-top: 14px;
 }
@@ -379,6 +381,36 @@ section {
   margin-bottom: 18px;
 }
 
+.directory-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  max-width: 920px;
+  margin: 0 0 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 10px;
+  box-shadow: 0 12px 34px rgba(19, 32, 29, 0.06);
+}
+
+.directory-search input {
+  min-height: 46px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  padding: 0 16px;
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+
+.directory-search input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
 .tools-grid,
 .workflow-grid,
 .update-grid,
@@ -479,6 +511,24 @@ section {
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.7);
   padding: 24px;
+  color: var(--muted);
+}
+
+.holding-panel {
+  max-width: 760px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.holding-panel h2 {
+  margin: 8px 0 10px;
+}
+
+.holding-panel p {
+  margin: 0 0 18px;
   color: var(--muted);
 }
 
@@ -646,7 +696,8 @@ section {
   }
 
   .search-row,
-  .toolbar {
+  .toolbar,
+  .directory-search {
     grid-template-columns: 1fr;
   }
 

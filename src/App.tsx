@@ -1,4 +1,4 @@
-import { CategoryChips, CategoryFilter, MaintenancePanel, SitesGrid, UpdateCards, WorkflowGrid } from "./components/DataSections";
+import { CategoryChips, CategoryFilter, MaintenancePanel, SitesGrid, UpdateCards } from "./components/DataSections";
 import { Layout } from "./components/Layout";
 
 function page() {
@@ -32,20 +32,13 @@ function HomePage() {
     <>
       <section className="hero" aria-labelledby="page-title">
         <div>
-          <p className="eyebrow">AI Tools / Workflows / Tutorials</p>
+          <p className="eyebrow">AI Tools / Tutorials / Daily Checks</p>
           <h1 id="page-title">发现、筛选并上手真正有用的 AI 工具</h1>
-          <p className="lead-text">每天维护 AI 站点导航、工具教程和可复制工作流，帮你从收集链接走到实际使用。</p>
+          <p className="lead-text">每天维护 AI 站点导航和工具教程，按场景、费用、登录要求和可访问状态整理。</p>
 
-          <div className="search-panel">
-            <form className="search-row" action="/sites/">
-              <input name="q" type="search" placeholder="搜索 AI 工具、场景或工作流，例如：知识库问答、RSS摘要、图片生成" autoComplete="off" />
-              <button className="button primary" type="submit">搜索</button>
-            </form>
-            <div className="quick-actions">
-              <a className="button primary" href="/sites/">浏览AI站点导航</a>
-              <a className="button secondary" href="/articles/">查看工具教程</a>
-              <a className="button secondary" href="/workflows/">复制工作流模板</a>
-            </div>
+          <div className="hero-actions">
+            <a className="button primary" href="/sites/">浏览AI站点导航</a>
+            <a className="button secondary" href="/articles/">查看工具教程</a>
           </div>
 
           <CategoryChips />
@@ -60,17 +53,11 @@ function HomePage() {
           body="站点卡片来自数据库，状态和分类会随每日维护更新。"
           action={{ href: "/sites/", label: "查看全部" }}
         />
+        <form className="directory-search" action="/sites/">
+          <input name="q" type="search" placeholder="搜索 AI 工具、场景或分类，例如：知识库问答、图片生成、自动化" autoComplete="off" />
+          <button className="button primary" type="submit">搜索</button>
+        </form>
         <SitesGrid featured limit={6} />
-      </section>
-
-      <section>
-        <SectionHead
-          kicker="Workflow Templates"
-          title="可复制工作流模板"
-          body="每个模板都围绕一个真实任务：收集、摘要、分类、通知或知识库问答。"
-          action={{ href: "/workflows/", label: "浏览模板" }}
-        />
-        <WorkflowGrid featured limit={3} />
       </section>
     </>
   );
@@ -109,10 +96,15 @@ function WorkflowsPage() {
     <>
       <section className="page-title">
         <p className="eyebrow">Workflow Library</p>
-        <h1>可复制工作流模板</h1>
-        <p>围绕真实任务组织模板：内容收集、AI 摘要、知识库问答、站点维护和结果通知。</p>
+        <h1>工作流模板整理中</h1>
+        <p>这个栏目会等到每个模板都有可复制步骤、输入输出、工具配置和风险说明后再展示。</p>
       </section>
-      <WorkflowGrid limit={30} />
+      <section className="holding-panel">
+        <p className="meta">Not published yet</p>
+        <h2>暂不展示占位模板</h2>
+        <p>没有可直接复用的模板，放出来只会误导用户。当前先保留 AI 站点导航和教程，模板库整理完成后再上线。</p>
+        <a className="button primary" href="/sites/">先浏览 AI 站点导航</a>
+      </section>
     </>
   );
 }
