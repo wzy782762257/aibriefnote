@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>本地模型还是云端 API：隐私、成本与维护对比 | AI Brief Note</title>
+    <meta name="description" content="从数据敏感度、质量、延迟、成本和维护能力出发，选择本地模型、云端 AI API 或混合方案。">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="google-adsense-account" content="ca-pub-6929744420910509">
+    <link rel="canonical" href="https://aibriefnote.com/articles/local-vs-cloud-ai-models">
+    <link rel="stylesheet" href="/src/styles/theme.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6929744420910509" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header class="site-header"><a class="brand" href="/" aria-label="AI Brief Note 首页"><span class="brand-mark" aria-hidden="true">A</span><span>AI Brief Note</span></a><form class="header-search" action="/sites/" role="search"><input name="q" type="search" placeholder="搜索 AI 工具、场景或分类" aria-label="搜索 AI 工具、场景或分类"><button type="submit">搜索</button></form><nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/sites/">AI站点导航</a><a href="/articles/">工具教程</a><a href="/updates/">每日更新</a><a class="nav-cta" href="/contact">提交工具</a></nav></header>
+    <main>
+      <article class="deep-dive guide-page">
+        <div class="section-heading"><p class="kicker">Model Selection</p><h1>本地模型还是云端 API：按隐私、成本和维护难度选择</h1></div>
+        <div class="guide-summary"><p><strong>先给结论：</strong>没有统一赢家。稳定质量和快速上线通常偏向云端；离线、可控和特定数据边界可能偏向本地；多数团队最终会采用混合方案。</p></div>
+        <div class="prose">
+          <h2>一、先判断数据能不能离开环境</h2>
+          <p>如果输入包含客户合同、未公开代码、身份信息或受监管数据，先确认组织政策、供应商条款、数据保留和训练使用规则。不要把“使用 API”简单等同于公开数据，也不要把“本地部署”误认为天然安全；本地服务同样需要访问控制、日志管理和补丁维护。</p>
+          <h2>二、质量与任务复杂度</h2>
+          <p>复杂推理、长文档理解和多语言写作通常更依赖模型能力与稳定服务。分类、格式转换、内部检索和固定领域任务，则可能用较小本地模型满足。最可靠的做法是准备自己的测试集，而不是照搬公开排行榜。</p>
+          <h2>三、不要只比较单次调用价格</h2>
+          <div class="table-wrap"><table class="comparison-table"><thead><tr><th>成本</th><th>云端 API</th><th>本地部署</th></tr></thead><tbody>
+            <tr><td>启动</td><td>通常较低，按量使用</td><td>硬件、部署和工程时间较高</td></tr>
+            <tr><td>运维</td><td>供应商负责基础设施</td><td>需要监控、升级、容量和安全维护</td></tr>
+            <tr><td>扩缩容</td><td>相对容易，但受配额影响</td><td>需要预留资源或增加设备</td></tr>
+            <tr><td>可预测性</td><td>调用波动会影响账单</td><td>固定容量下更可预测</td></tr>
+          </tbody></table></div>
+          <h2>四、延迟和可用性</h2>
+          <p>本地模型可减少网络往返并支持离线，但模型加载和硬件资源也会造成延迟。云端服务通常有成熟扩容能力，却依赖网络、区域可用性和供应商状态。实时交互应用应分别测量首字延迟、完整响应时间和高峰期失败率。</p>
+          <h2>五、避免被单一方案锁住</h2>
+          <ul>
+            <li>把提示词、评估集和业务规则保存在自己的系统中。</li>
+            <li>统一模型调用接口，避免业务代码直接依赖某家特殊字段。</li>
+            <li>为关键任务准备降级模型或人工处理路径。</li>
+            <li>定期导出数据和配置，确认停止服务后仍可迁移。</li>
+          </ul>
+          <h2>六、一个实用决策顺序</h2>
+          <ol class="steps-list">
+            <li>列出不可外传的数据与合规限制。</li>
+            <li>用 20 至 50 个真实任务建立质量基线。</li>
+            <li>估算月调用量、峰值并发和可接受延迟。</li>
+            <li>把工程维护时间计入总成本。</li>
+            <li>先做小规模试点，再决定本地、云端或混合架构。</li>
+          </ol>
+          <p>模型选择应服务于任务，而不是反过来让业务迁就某个热门模型。能持续评估、替换和降级的系统，通常比一次选中“最强模型”更重要。</p>
+        </div>
+      </article>
+    </main>
+    <footer class="site-footer"><p>© 2026 AI Brief Note. 内容经过人工整理。</p><div><a href="/articles/">更多教程</a><a href="/about">关于</a><a href="/contact">联系</a><a href="/privacy">隐私政策</a></div></footer>
+  </body>
+</html>

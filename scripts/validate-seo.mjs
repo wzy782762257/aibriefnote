@@ -56,6 +56,18 @@ function isNoindex(html) {
   return /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html);
 }
 
+function extractTitle(html) {
+  return html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim() || "";
+}
+
+function extractDescription(html) {
+  return html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i)?.[1]?.trim() || "";
+}
+
+function countMatches(html, pattern) {
+  return [...html.matchAll(pattern)].length;
+}
+
 function isLocalHref(href) {
   return !/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(href)
     && !href.startsWith("mailto:")
@@ -77,9 +89,24 @@ for (const file of htmlFiles) {
   const expectedCanonical = `${siteUrl}${route}`;
   const canonical = extractCanonical(html);
   const noindex = isNoindex(html);
+  const title = extractTitle(html);
+  const description = extractDescription(html);
+  const h1Count = countMatches(html, /<h1(?:\s[^>]*)?>/gi);
 
   if (!noindex) {
     expectedLocs.add(expectedCanonical);
+  }
+
+  if (!title) {
+    fail(`${file}: missing title`);
+  }
+
+  if (!description) {
+    fail(`${file}: missing meta description`);
+  }
+
+  if (h1Count !== 1) {
+    fail(`${file}: expected exactly one h1, found ${h1Count}`);
   }
 
   if (canonical !== expectedCanonical) {
@@ -93,6 +120,14 @@ for (const file of htmlFiles) {
     if (cleanHref.endsWith(".html") || cleanHref.endsWith("/index.html")) {
       fail(`${file}: local href should use the public route, found ${href}`);
     }
+  }
+}
+
+const lowContentPages = ["about.html", "contact.html", "privacy.html", path.join("updates", "index.html")];
+for (const file of lowContentPages) {
+  const html = await fs.readFile(path.join(root, file), "utf8");
+  if (html.includes("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")) {
+    fail(`${file}: low-content or policy page should not load the AdSense script`);
   }
 }
 

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>用 n8n 搭建 RSS、AI 摘要与人工审核工作流 | AI Brief Note</title>
+    <meta name="description" content="从字段设计、提示词、去重到失败重试，搭建一条 RSS 采集、AI 摘要、人工审核后再发布的 n8n 工作流。">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="google-adsense-account" content="ca-pub-6929744420910509">
+    <link rel="canonical" href="https://aibriefnote.com/articles/n8n-rss-ai-review-workflow">
+    <link rel="stylesheet" href="/src/styles/theme.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6929744420910509" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="AI Brief Note 首页"><span class="brand-mark" aria-hidden="true">A</span><span>AI Brief Note</span></a>
+      <form class="header-search" action="/sites/" role="search"><input name="q" type="search" placeholder="搜索 AI 工具、场景或分类" aria-label="搜索 AI 工具、场景或分类"><button type="submit">搜索</button></form>
+      <nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/sites/">AI站点导航</a><a href="/articles/">工具教程</a><a href="/updates/">每日更新</a><a class="nav-cta" href="/contact">提交工具</a></nav>
+    </header>
+    <main>
+      <article class="deep-dive guide-page">
+        <div class="section-heading"><p class="kicker">Workflow Tutorial</p><h1>用 n8n 搭建 RSS → AI 摘要 → 人工审核工作流</h1></div>
+        <div class="guide-summary">
+          <p><strong>目标：</strong>每天读取一组可信来源，把候选内容整理成结构化草稿，但绝不让模型直接发布。</p>
+          <p><strong>适合：</strong>个人站长、研究团队、市场与内容运营人员。</p>
+        </div>
+        <div class="prose">
+          <p>这条工作流真正解决的不是“自动写文章”，而是把重复的收集、去重和初步整理交给机器，把判断、核对和表达留给人。这样既节省时间，也能避免模型把错误摘要直接推向读者。</p>
+          <h2>一、先固定输入和输出字段</h2>
+          <p>输入至少保留来源名称、原文标题、原文链接、发布时间和原始摘要。输出建议固定为候选标题、三条事实要点、适合读者、内容分类、风险提醒和原文链接。不要只输出一大段自由文本，否则后续很难筛选和审计。</p>
+          <div class="note-inline"><span>推荐原则</span><p>模型生成的每一条事实，都必须能回到原文链接核对。没有来源的数字、版本号和人物表述不进入发布队列。</p></div>
+          <h2>二、节点顺序</h2>
+          <ol class="steps-list">
+            <li><strong>Schedule Trigger：</strong>每天固定时间运行一次，初期不要设置得过于频繁。</li>
+            <li><strong>RSS Read：</strong>逐个读取来源，只保留最近一段时间的新条目。</li>
+            <li><strong>去重：</strong>用规范化后的 URL 或“来源 + 标题”生成唯一键，已存在的条目直接跳过。</li>
+            <li><strong>规则筛选：</strong>先用关键词和来源白名单排除招聘、营销活动、重复发布等低价值条目。</li>
+            <li><strong>AI 整理：</strong>要求模型返回严格 JSON，并明确“不确定时标记 unknown，不得猜测”。</li>
+            <li><strong>写入审核表：</strong>保存原文、模型输出、运行时间和审核状态，默认状态必须是待审核。</li>
+            <li><strong>人工复核：</strong>编辑确认事实、补充背景、重写表达后，才进入站点发布流程。</li>
+          </ol>
+          <h2>三、提示词应约束什么</h2>
+          <p>提示词应明确任务边界：只根据输入材料提取；不补充输入中不存在的价格、日期和性能数据；区分事实与判断；遇到信息冲突时列出冲突；输出指定字段。相比“帮我写一篇精彩摘要”，这种约束更容易得到稳定结果。</p>
+          <h2>四、失败处理</h2>
+          <p>RSS 超时、模型限流、JSON 解析失败和表格写入失败要分别记录。对网络错误可以有限重试，对内容错误不要无限重试。连续失败的来源应进入人工复查列表，而不是让整条流程停止。</p>
+          <h2>五、上线前测试</h2>
+          <ul>
+            <li>准备正常文章、重复文章、空摘要、旧文章和明显营销内容各一条。</li>
+            <li>确认重复条目不会再次写入，未知信息不会被模型补全。</li>
+            <li>确认任何异常都不会触发自动发布。</li>
+            <li>抽查至少一周输出，观察来源偏差和误分类，再逐步增加来源。</li>
+          </ul>
+          <p>一条可靠的自动化流程，价值不在于完全无人值守，而在于让人工只处理真正需要判断的部分。</p>
+        </div>
+      </article>
+    </main>
+    <footer class="site-footer"><p>© 2026 AI Brief Note. 内容经过人工整理。</p><div><a href="/articles/">更多教程</a><a href="/about">关于</a><a href="/contact">联系</a><a href="/privacy">隐私政策</a></div></footer>
+  </body>
+</html>

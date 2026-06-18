@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RAG 知识库上线前检查：切分、召回、引用与拒答 | AI Brief Note</title>
+    <meta name="description" content="一套可执行的 RAG 知识库质量检查方法，覆盖文档清洗、切分、召回、引用、权限、拒答和回归测试。">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="google-adsense-account" content="ca-pub-6929744420910509">
+    <link rel="canonical" href="https://aibriefnote.com/articles/rag-knowledge-base-quality-checklist">
+    <link rel="stylesheet" href="/src/styles/theme.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6929744420910509" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header class="site-header"><a class="brand" href="/" aria-label="AI Brief Note 首页"><span class="brand-mark" aria-hidden="true">A</span><span>AI Brief Note</span></a><form class="header-search" action="/sites/" role="search"><input name="q" type="search" placeholder="搜索 AI 工具、场景或分类" aria-label="搜索 AI 工具、场景或分类"><button type="submit">搜索</button></form><nav class="nav" aria-label="主导航"><a href="/">首页</a><a href="/sites/">AI站点导航</a><a href="/articles/">工具教程</a><a href="/updates/">每日更新</a><a class="nav-cta" href="/contact">提交工具</a></nav></header>
+    <main>
+      <article class="deep-dive guide-page">
+        <div class="section-heading"><p class="kicker">RAG Quality Guide</p><h1>RAG 知识库上线前检查：切分、召回、引用与拒答</h1></div>
+        <div class="guide-summary"><p><strong>核心判断：</strong>回答流畅不等于可靠。先验证检索到的证据是否正确，再评价模型表达。</p></div>
+        <div class="prose">
+          <p>很多知识库演示只准备几个“答案就在标题里”的问题，因此看起来效果很好。真实用户却会使用缩写、旧名称、模糊描述和跨文档问题。上线前必须用更接近真实使用的测试集验证。</p>
+          <h2>一、文档进入知识库之前</h2>
+          <p>删除重复页眉页脚、导航文字、无意义表格列和扫描噪声；保留文档标题、章节、版本日期与权限标签。旧版制度与新版制度不能混在一起且没有时间标识，否则召回正确文本也可能给出过期答案。</p>
+          <h2>二、切分不是越小越好</h2>
+          <p>片段太短会失去上下文，太长则会混入无关内容。测试时重点观察：定义与例外是否被拆开、表格标题是否与数据分离、操作步骤是否保留顺序。可先按自然标题和段落切分，再根据失败问题调整，而不是盲目追求统一字符数。</p>
+          <h2>三、建立四类问题集</h2>
+          <div class="table-wrap"><table class="comparison-table"><thead><tr><th>问题类型</th><th>目的</th><th>合格表现</th></tr></thead><tbody>
+            <tr><td>直接事实</td><td>验证基本召回</td><td>引用正确章节，答案与原文一致</td></tr>
+            <tr><td>同义表达</td><td>验证用户不同说法</td><td>不依赖原文关键词也能找到证据</td></tr>
+            <tr><td>跨段问题</td><td>验证多条证据组合</td><td>分别引用依据，不把推断当原文</td></tr>
+            <tr><td>库外问题</td><td>验证拒答</td><td>明确说明资料不足，不编造答案</td></tr>
+          </tbody></table></div>
+          <h2>四、查看召回，不要只看最终回答</h2>
+          <p>每次失败都要判断是“没有找到正确片段”“找到但排序太低”“上下文正确但模型理解错误”还是“资料本身没有答案”。这四种问题的修复方向完全不同，不能都靠换一个更大的模型解决。</p>
+          <h2>五、引用和拒答</h2>
+          <p>回答应显示文档名称、章节或可访问链接。引用必须真的支持结论，不能只是在答案后面随机附一个相关文档。对于资料库没有覆盖的问题，系统应说明边界，并建议用户联系负责人或补充资料。</p>
+          <h2>六、权限与日志</h2>
+          <ul>
+            <li>检索前应用权限过滤，不能先取回敏感片段再要求模型不要显示。</li>
+            <li>日志中避免长期保存完整敏感问题和个人数据。</li>
+            <li>文档删除或权限变化后，向量索引也要同步更新。</li>
+            <li>保留失败问题、召回片段和人工判定，形成回归测试集。</li>
+          </ul>
+          <p>建议用 30 至 50 个真实问题建立第一版测试集。每次调整切分、嵌入模型或提示词后重复运行，只有关键问题没有退化，才适合继续扩大使用范围。</p>
+        </div>
+      </article>
+    </main>
+    <footer class="site-footer"><p>© 2026 AI Brief Note. 内容经过人工整理。</p><div><a href="/articles/">更多教程</a><a href="/about">关于</a><a href="/contact">联系</a><a href="/privacy">隐私政策</a></div></footer>
+  </body>
+</html>

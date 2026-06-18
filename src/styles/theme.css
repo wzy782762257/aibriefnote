@@ -677,6 +677,45 @@ section {
   font-weight: 800;
 }
 
+.crawler-fallback {
+  width: calc(100% - (var(--page-gutter) * 2));
+  max-width: 1120px;
+  margin: 48px auto;
+}
+
+.crawler-fallback h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.crawler-fallback-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.crawler-fallback-list li {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 16px;
+}
+
+.crawler-fallback-list a {
+  color: var(--primary-strong);
+  font-weight: 800;
+}
+
+.policy-list {
+  padding-left: 22px;
+}
+
+.policy-list a {
+  color: var(--primary);
+  font-weight: 800;
+}
+
 .site-footer {
   display: flex;
   flex-wrap: wrap;
@@ -699,7 +738,8 @@ section {
   .tools-grid,
   .workflow-grid,
   .update-grid,
-  .article-grid {
+  .article-grid,
+  .crawler-fallback-list {
     grid-template-columns: 1fr;
   }
 

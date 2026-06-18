@@ -119,6 +119,45 @@ function UpdatesPage() {
 }
 
 function ArticlesPage() {
+  const articles = [
+    {
+      href: "/articles/ai-brief-2026-06-15",
+      meta: "AI Automation Guide · 2026-06-15",
+      title: "AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门",
+      summary: "按真实任务拆解 AI 自动化工具的选择、第一条工作流和上线前质量检查。"
+    },
+    {
+      href: "/articles/n8n-rss-ai-review-workflow",
+      meta: "Workflow Tutorial · 2026-06-18",
+      title: "用 n8n 搭建 RSS → AI 摘要 → 人工审核工作流",
+      summary: "从输入字段、提示词到失败重试，搭建一条不会自动误发布的内容整理流程。"
+    },
+    {
+      href: "/articles/rag-knowledge-base-quality-checklist",
+      meta: "RAG Guide · 2026-06-18",
+      title: "RAG 知识库上线前检查：切分、召回、引用与拒答",
+      summary: "用一套可执行测试判断知识库问答是否真的可靠，而不只是在演示里看起来聪明。"
+    },
+    {
+      href: "/articles/ai-content-human-review-checklist",
+      meta: "Content Operations · 2026-06-18",
+      title: "AI 辅助内容发布前，人工审核到底要检查什么",
+      summary: "覆盖事实、来源、结构、版权、时效和用户价值，适合内容站建立发布清单。"
+    },
+    {
+      href: "/articles/local-vs-cloud-ai-models",
+      meta: "Model Selection · 2026-06-18",
+      title: "本地模型还是云端 API：按隐私、成本和维护难度选择",
+      summary: "不追模型排行榜，直接从数据敏感度、调用规模、延迟和团队能力做判断。"
+    },
+    {
+      href: "/articles/ai-tool-evaluation-checklist",
+      meta: "Tool Evaluation · 2026-06-18",
+      title: "评估一个 AI 工具值不值得长期使用的 12 项清单",
+      summary: "从数据出口、价格变化、可替代性到团队协作，避免只看一次演示就做采购决定。"
+    }
+  ];
+
   return (
     <>
       <section className="page-title">
@@ -127,12 +166,14 @@ function ArticlesPage() {
         <p>围绕真实工具选择、搭建步骤和上线检查整理的教程文章。</p>
       </section>
       <div className="article-grid">
-        <article className="article-card">
-          <p className="meta">AI Automation Guide · 2026-06-15</p>
-          <h3><a href="/articles/ai-brief-2026-06-15">AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门</a></h3>
-          <p>按真实任务拆解 AI 自动化工具的选择、第一条工作流和上线前质量检查。</p>
-          <a className="article-link" href="/articles/ai-brief-2026-06-15">阅读教程</a>
-        </article>
+        {articles.map((article) => (
+          <article className="article-card" key={article.href}>
+            <p className="meta">{article.meta}</p>
+            <h3><a href={article.href}>{article.title}</a></h3>
+            <p>{article.summary}</p>
+            <a className="article-link" href={article.href}>阅读教程</a>
+          </article>
+        ))}
       </div>
     </>
   );
