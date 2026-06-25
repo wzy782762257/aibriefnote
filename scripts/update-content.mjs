@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const siteUrl = "https://aibriefnote.com";
-const maxItems = Number(process.env.AI_BRIEF_MAX_ITEMS || 12);
+const maxItems = Number(process.env.AI_BRIEF_MAX_ITEMS || 24);
 const maxAgeDays = Number(process.env.AI_BRIEF_MAX_AGE_DAYS || 45);
 const today = process.env.AI_BRIEF_DATE || new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Shanghai",
