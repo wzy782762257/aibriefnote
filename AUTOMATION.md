@@ -4,13 +4,13 @@
 
 ## 自动化链路
 
-1. `scripts/update-content.mjs` 每天读取 `content/sources.json` 中的公开 RSS 来源。
-2. 脚本生成一篇每日简报到 `articles/`。
-3. 脚本更新首页文章卡片和 `sitemap.xml`。
+1. `scripts/update-content.mjs` 每天读取 `content/sources.json` 中的公开 RSS/Atom 来源。
+2. 脚本筛选 AI 相关条目，生成一篇每日简报到 `articles/`。
+3. 脚本更新 `src/data/articles.ts`、`articles/index.html` 的爬虫兜底链接，以及 `sitemap.xml` 和 `public/sitemap.xml`。
 4. GitHub Actions 每天自动运行脚本并提交更新。当前保留一个每日任务，时间为北京时间 09:20。
 5. Cloudflare Pages 连接 GitHub 仓库后，每次提交都会自动部署。
 
-如果所有 RSS 来源都抓取失败，脚本会直接失败并停止发布，避免把占位内容或测试内容写到首页。
+如果所有 RSS 来源都抓取失败，或没有筛出 AI 相关条目，脚本会直接失败并停止发布，避免把占位内容或测试内容写到首页。
 
 ## 本地编辑后自动推送
 
@@ -103,7 +103,7 @@ Production 和 Preview 环境都可以设置。设置后重新部署一次。
 content/sources.json
 ```
 
-可以添加更多公开 RSS，但不要抓取全文复制。建议只做摘要、引用标题、附来源链接和编辑判断。
+可以添加更多公开 RSS/Atom，但不要抓取全文复制。当前脚本只保留标题、摘要、来源链接和人工复查提示，真正教程仍建议人工核对后再改写。
 
 ## 收益现实
 

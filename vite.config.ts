@@ -1,6 +1,18 @@
 import { resolve } from "node:path";
+import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+
+function articleInputs() {
+  return Object.fromEntries(
+    readdirSync(resolve(__dirname, "articles"))
+      .filter((file) => file.endsWith(".html") && file !== "index.html")
+      .map((file) => [
+        `article-${file.replace(/\.html$/, "")}`,
+        resolve(__dirname, "articles", file)
+      ])
+  );
+}
 
 export default defineConfig({
   plugins: [react()],
@@ -13,12 +25,7 @@ export default defineConfig({
         sites: resolve(__dirname, "sites/index.html"),
         updates: resolve(__dirname, "updates/index.html"),
         articles: resolve(__dirname, "articles/index.html"),
-        guide: resolve(__dirname, "articles/ai-brief-2026-06-15.html"),
-        n8nGuide: resolve(__dirname, "articles/n8n-rss-ai-review-workflow.html"),
-        ragGuide: resolve(__dirname, "articles/rag-knowledge-base-quality-checklist.html"),
-        reviewGuide: resolve(__dirname, "articles/ai-content-human-review-checklist.html"),
-        modelGuide: resolve(__dirname, "articles/local-vs-cloud-ai-models.html"),
-        evaluationGuide: resolve(__dirname, "articles/ai-tool-evaluation-checklist.html"),
+        ...articleInputs(),
         about: resolve(__dirname, "about.html"),
         contact: resolve(__dirname, "contact.html"),
         privacy: resolve(__dirname, "privacy.html"),

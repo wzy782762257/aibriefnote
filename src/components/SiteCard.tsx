@@ -1,14 +1,16 @@
 import type { AiSite } from "../lib/api";
 import { useMemo, useState } from "react";
+import { useI18n } from "../lib/i18n";
 
-function statusLabel(site: AiSite) {
-  if (site.status === "review") return ["待复查", "review"];
-  if (site.loginRequired) return ["需登录", "login"];
-  return ["可访问", "active"];
+function statusClass(site: AiSite) {
+  if (site.status === "review") return "review";
+  if (site.loginRequired) return "login";
+  return "active";
 }
 
 export function SiteCard({ site }: { site: AiSite }) {
-  const [label, statusClass] = statusLabel(site);
+  const { t } = useI18n();
+  const label = site.status === "review" ? t.review : site.loginRequired ? t.loginRequired : t.available;
   const [iconFailed, setIconFailed] = useState(false);
   const faviconUrl = useMemo(() => {
     return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(site.url)}&sz=64`;
@@ -22,7 +24,7 @@ export function SiteCard({ site }: { site: AiSite }) {
             <img src={faviconUrl} alt="" loading="lazy" onError={() => setIconFailed(true)} />
           )}
         </div>
-        <span className={`status ${statusClass}`}>{label}</span>
+        <span className={`status ${statusClass(site)}`}>{label}</span>
       </div>
       <div>
         <h3>{site.name}</h3>
@@ -35,7 +37,7 @@ export function SiteCard({ site }: { site: AiSite }) {
         {site.tags.slice(0, 3).map((tag) => <span className="tag" key={tag}>{tag}</span>)}
       </div>
       <div className="card-actions">
-        <a href={site.url} target="_blank" rel="nofollow noopener noreferrer">访问站点</a>
+        <a href={site.url} target="_blank" rel="nofollow noopener noreferrer">{t.visitSite}</a>
       </div>
     </article>
   );

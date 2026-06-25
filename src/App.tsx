@@ -1,5 +1,7 @@
 import { CategoryChips, CategoryFilter, MaintenancePanel, SitesGrid, UpdateCards } from "./components/DataSections";
 import { Layout } from "./components/Layout";
+import { articles } from "./data/articles";
+import { useI18n } from "./lib/i18n";
 
 function page() {
   return document.documentElement.dataset.page || "home";
@@ -28,17 +30,19 @@ function SectionHead({ kicker, title, body, action }: {
 }
 
 function HomePage() {
+  const { t } = useI18n();
+
   return (
     <>
       <section className="hero" aria-labelledby="page-title">
         <div>
-          <p className="eyebrow">AI Tools / Tutorials / Daily Checks</p>
-          <h1 id="page-title">发现、筛选并上手真正有用的 AI 工具</h1>
-          <p className="lead-text">每天维护 AI 站点导航和工具教程，按场景、费用、登录要求和可访问状态整理。</p>
+          <p className="eyebrow">{t.homeKicker}</p>
+          <h1 id="page-title">{t.homeTitle}</h1>
+          <p className="lead-text">{t.homeLead}</p>
 
           <div className="hero-actions">
-            <a className="button primary" href="/sites/">浏览AI站点导航</a>
-            <a className="button secondary" href="/articles/">查看工具教程</a>
+            <a className="button primary" href="/sites/">{t.browseSites}</a>
+            <a className="button secondary" href="/articles/">{t.viewArticles}</a>
           </div>
 
           <CategoryChips />
@@ -48,10 +52,10 @@ function HomePage() {
 
       <section>
         <SectionHead
-          kicker="Directory"
-          title="热门 AI 站点"
-          body="站点卡片来自数据库，状态和分类会随每日维护更新。"
-          action={{ href: "/sites/", label: "查看全部" }}
+          kicker={t.directoryKicker}
+          title={t.popularSites}
+          body={t.popularSitesBody}
+          action={{ href: "/sites/", label: t.viewAll }}
         />
         <SitesGrid featured limit={6} />
       </section>
@@ -60,6 +64,7 @@ function HomePage() {
 }
 
 function SitesPage() {
+  const { t } = useI18n();
   const params = searchParams();
   const category = params.get("category") || "";
   const query = params.get("q") || "";
@@ -67,18 +72,18 @@ function SitesPage() {
   return (
     <>
       <section className="page-title">
-        <p className="eyebrow">AI Site Directory</p>
-        <h1>AI 站点导航</h1>
-        <p>这里收录和维护可用的 AI 工具入口。每个站点都按场景、费用、登录要求和访问状态整理。</p>
+        <p className="eyebrow">{t.sitesKicker}</p>
+        <h1>{t.sitesTitle}</h1>
+        <p>{t.sitesBody}</p>
       </section>
 
       <section className="directory-shell">
         <CategoryFilter category={category} />
         <div>
           <form className="toolbar" action="/sites/">
-            <input name="q" type="search" placeholder="搜索工具、场景或分类" defaultValue={query} />
+            <input name="q" type="search" placeholder={t.sitesSearchPlaceholder} defaultValue={query} />
             {category ? <input type="hidden" name="category" value={category} /> : null}
-            <button className="button primary" type="submit">筛选</button>
+            <button className="button primary" type="submit">{t.filter}</button>
           </form>
           <SitesGrid limit={30} category={category} query={query} />
         </div>
@@ -88,11 +93,13 @@ function SitesPage() {
 }
 
 function WorkflowsPage() {
+  const { t } = useI18n();
+
   return (
     <>
       <section className="page-title">
         <p className="eyebrow">Workflow Library</p>
-        <h1>工作流模板整理中</h1>
+        <h1>{t.workflowsTitle}</h1>
         <p>这个栏目会等到每个模板都有可复制步骤、输入输出、工具配置和风险说明后再展示。</p>
       </section>
       <section className="holding-panel">
@@ -106,12 +113,14 @@ function WorkflowsPage() {
 }
 
 function UpdatesPage() {
+  const { t } = useI18n();
+
   return (
     <>
       <section className="page-title">
-        <p className="eyebrow">Maintenance Log</p>
-        <h1>每日更新与维护状态</h1>
-        <p>记录新增站点、失效复查、分类调整和教程更新。这个页面用于证明导航站不是一次性链接仓库。</p>
+        <p className="eyebrow">{t.updatesKicker}</p>
+        <h1>{t.updatesTitle}</h1>
+        <p>{t.updatesBody}</p>
       </section>
       <UpdateCards />
     </>
@@ -119,59 +128,42 @@ function UpdatesPage() {
 }
 
 function ArticlesPage() {
-  const articles = [
-    {
-      href: "/articles/ai-brief-2026-06-15",
-      meta: "AI Automation Guide · 2026-06-15",
-      title: "AI 自动化工具怎么选：n8n、Dify、Langflow、Open WebUI 入门",
-      summary: "按真实任务拆解 AI 自动化工具的选择、第一条工作流和上线前质量检查。"
-    },
-    {
-      href: "/articles/n8n-rss-ai-review-workflow",
-      meta: "Workflow Tutorial · 2026-06-18",
-      title: "用 n8n 搭建 RSS → AI 摘要 → 人工审核工作流",
-      summary: "从输入字段、提示词到失败重试，搭建一条不会自动误发布的内容整理流程。"
-    },
-    {
-      href: "/articles/rag-knowledge-base-quality-checklist",
-      meta: "RAG Guide · 2026-06-18",
-      title: "RAG 知识库上线前检查：切分、召回、引用与拒答",
-      summary: "用一套可执行测试判断知识库问答是否真的可靠，而不只是在演示里看起来聪明。"
-    },
-    {
-      href: "/articles/ai-content-human-review-checklist",
-      meta: "Content Operations · 2026-06-18",
-      title: "AI 辅助内容发布前，人工审核到底要检查什么",
-      summary: "覆盖事实、来源、结构、版权、时效和用户价值，适合内容站建立发布清单。"
-    },
-    {
-      href: "/articles/local-vs-cloud-ai-models",
-      meta: "Model Selection · 2026-06-18",
-      title: "本地模型还是云端 API：按隐私、成本和维护难度选择",
-      summary: "不追模型排行榜，直接从数据敏感度、调用规模、延迟和团队能力做判断。"
-    },
-    {
-      href: "/articles/ai-tool-evaluation-checklist",
-      meta: "Tool Evaluation · 2026-06-18",
-      title: "评估一个 AI 工具值不值得长期使用的 12 项清单",
-      summary: "从数据出口、价格变化、可替代性到团队协作，避免只看一次演示就做采购决定。"
-    }
+  const { t } = useI18n();
+  const params = searchParams();
+  const category = params.get("category") || "all";
+  const filters = [
+    { label: t.allArticles, value: "all", href: "/articles/" },
+    { label: t.todayAdded, value: "daily", href: "/articles/?category=daily" },
+    { label: t.tutorials, value: "tutorial", href: "/articles/?category=tutorial" },
+    { label: t.events, value: "event", href: "/articles/?category=event" }
   ];
+  const visibleArticles = articles.filter((article) => {
+    if (category === "all") return true;
+    if (category === "event") return article.category === "event" || article.category === "daily";
+    return article.category === category;
+  });
 
   return (
     <>
       <section className="page-title">
-        <p className="eyebrow">Archive</p>
-        <h1>教程归档</h1>
-        <p>围绕真实工具选择、搭建步骤和上线检查整理的教程文章。</p>
+        <p className="eyebrow">{t.articlesKicker}</p>
+        <h1>{t.articlesTitle}</h1>
+        <p>{t.articlesBody}</p>
       </section>
+      <nav className="article-filter" aria-label={t.articlesTitle}>
+        {filters.map((filter) => (
+          <a className={`filter-button ${category === filter.value ? "active" : ""}`} href={filter.href} key={filter.value}>
+            {filter.label}
+          </a>
+        ))}
+      </nav>
       <div className="article-grid">
-        {articles.map((article) => (
+        {visibleArticles.map((article) => (
           <article className="article-card" key={article.href}>
             <p className="meta">{article.meta}</p>
             <h3><a href={article.href}>{article.title}</a></h3>
             <p>{article.summary}</p>
-            <a className="article-link" href={article.href}>阅读教程</a>
+            <a className="article-link" href={article.href}>{t.readArticle}</a>
           </article>
         ))}
       </div>

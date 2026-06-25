@@ -1,3 +1,5 @@
+import { fallbackCategories, fallbackSites } from "../data/siteDirectory";
+
 export type Category = {
   id: number;
   name: string;
@@ -62,6 +64,15 @@ async function readApi<T>(path: string): Promise<ApiResult<T>> {
   const response = await fetch(path, {
     headers: { accept: "application/json" }
   });
+
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    return {
+      configured: false,
+      message: "API endpoint did not return JSON."
+    };
+  }
+
   const payload = await response.json();
 
   if (!payload.configured) {
@@ -82,11 +93,45 @@ async function readApi<T>(path: string): Promise<ApiResult<T>> {
 }
 
 export function getCategories() {
-  return readApi<{ categories: Category[] }>("/api/categories");
+  return readApi<{ categories: Category[] }>("/api/categories").then((result) => {
+    if (result.configured) return result;
+    return {
+      configured: true,
+      data: { categories: fallbackCategories }
+    };
+  });
 }
 
 export function getSites(params: URLSearchParams) {
-  return readApi<{ sites: AiSite[] }>(`/api/sites?${params}`);
+  return readApi<{ sites: AiSite[] }>(`/api/sites?${params}`).then((result) => {
+    if (result.configured) return result;
+
+    const category = params.get("category");
+    const featured = params.get("featured");
+    const query = params.get("q")?.trim().toLowerCase();
+    const limit = Math.min(Number(params.get("limit") || 24), 60);
+
+    const sites = fallbackSites.filter((site) => {
+      if (category && site.category.slug !== category) return false;
+      if (featured === "1" && !site.featured) return false;
+      if (query) {
+        const haystack = [
+          site.name,
+          site.description,
+          site.category.name,
+          site.pricingType,
+          ...site.tags
+        ].join(" ").toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    }).slice(0, limit);
+
+    return {
+      configured: true,
+      data: { sites }
+    };
+  });
 }
 
 export function getWorkflows(params: URLSearchParams) {

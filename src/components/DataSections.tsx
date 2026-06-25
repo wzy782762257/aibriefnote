@@ -2,15 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { EmptyState, LoadingCards } from "./States";
 import { SiteCard } from "./SiteCard";
 import { WorkflowCard } from "./WorkflowCard";
+import { articles } from "../data/articles";
+import { useI18n } from "../lib/i18n";
 import {
   getCategories,
   getSites,
-  getUpdates,
   getWorkflows,
   type AiSite,
   type Category,
-  type MaintenanceLog,
-  type MaintenanceStats,
   type Workflow
 } from "../lib/api";
 
@@ -49,8 +48,9 @@ export function SitesGrid({ featured, limit = 24, category, query }: {
   category?: string;
   query?: string;
 }) {
+  const { t } = useI18n();
   const [sites, setSites] = useState<AiSite[]>([]);
-  const [message, setMessage] = useState("正在读取 AI 站点数据库。");
+  const [message, setMessage] = useState(t.loadingSites);
   const [loading, setLoading] = useState(true);
 
   const params = useMemo(() => {
@@ -67,18 +67,18 @@ export function SitesGrid({ featured, limit = 24, category, query }: {
     getSites(params).then((result) => {
       if (!result.configured) {
         setSites([]);
-        setMessage("D1 数据库未绑定。配置 DB binding 并导入 migrations/ 与 seeds/ 后，这里会显示 AI 站点导航。");
+        setMessage(t.dbMissingSites);
         return;
       }
       setSites(result.data?.sites || []);
-      setMessage("没有找到匹配的 AI 站点。");
+      setMessage(t.noSites);
     }).catch(() => {
       setSites([]);
-      setMessage("AI 站点读取失败，请稍后重试。");
+      setMessage(t.sitesFailed);
     }).finally(() => setLoading(false));
-  }, [params]);
+  }, [params, t]);
 
-  if (loading) return <LoadingCards label="正在读取 AI 站点数据库。" />;
+  if (loading) return <LoadingCards label={t.loadingSites} />;
   if (!sites.length) return <EmptyState>{message}</EmptyState>;
 
   return (
@@ -123,47 +123,64 @@ export function WorkflowGrid({ featured, limit = 24 }: { featured?: boolean; lim
 }
 
 export function MaintenancePanel() {
-  const [stats, setStats] = useState<MaintenanceStats | null>(null);
-  const [logs, setLogs] = useState<MaintenanceLog[]>([]);
-  const values = [
-    stats?.totalSites ?? "--",
-    stats?.addedToday ?? "--",
-    stats?.brokenToday ?? "--",
-    stats?.reviewCount ?? "--"
+  const { t } = useI18n();
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+  const cards = [
+    {
+      label: t.hotArticles,
+      count: articles.length,
+      href: "/articles/",
+      meta: `${t.collected} · ${t.viewCategory}`
+    },
+    {
+      label: t.todayAdded,
+      count: articles.filter((article) => article.date === today || article.generated).length,
+      href: "/updates/",
+      meta: `${t.collected} · ${t.viewCategory}`
+    },
+    {
+      label: t.tutorials,
+      count: articles.filter((article) => article.category === "tutorial").length,
+      href: "/articles/?category=tutorial",
+      meta: `${t.collected} · ${t.viewCategory}`
+    },
+    {
+      label: t.events,
+      count: articles.filter((article) => article.category === "daily" || article.category === "event").length,
+      href: "/articles/?category=event",
+      meta: `${t.collected} · ${t.viewCategory}`
+    }
   ];
 
-  useEffect(() => {
-    getUpdates().then((result) => {
-      if (!result.configured) return;
-      setStats(result.data?.stats || null);
-      setLogs(result.data?.logs || []);
-    }).catch(() => undefined);
-  }, []);
-
   return (
-    <aside className="hero-panel" aria-label="维护状态概览">
+    <aside className="hero-panel" aria-label={t.hotTitle}>
       <div className="hero-panel-top">
         <div>
-          <p className="meta">Daily Maintenance</p>
-          <h2>今日维护</h2>
+          <p className="meta">{t.hotKicker}</p>
+          <h2>{t.hotTitle}</h2>
         </div>
-        <span className="status active">公开</span>
+        <span className="status active">{t.hotBadge}</span>
       </div>
       <div className="metric-grid">
-        {["已收录", "今日新增", "修复失效", "待复查"].map((label, index) => (
-          <div className="metric" key={label}><span>{label}</span><strong>{values[index]}</strong></div>
+        {cards.map((card) => (
+          <a className="metric metric-link" href={card.href} key={card.label}>
+            <span>{card.label}</span>
+            <strong>{card.count}</strong>
+            <em>{card.meta}</em>
+          </a>
         ))}
       </div>
-      <ol className="updates-list">
-        {logs.length
-          ? logs.slice(0, 4).map((log) => <li key={log.id}>{log.note}</li>)
-          : <li>D1 绑定完成后，这里显示每日维护记录。</li>}
-      </ol>
     </aside>
   );
 }
 
 export function CategoryFilter({ category }: { category: string }) {
+  const { t } = useI18n();
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -174,7 +191,7 @@ export function CategoryFilter({ category }: { category: string }) {
 
   return (
     <aside className="filter-panel">
-      <a className={`filter-button ${category ? "" : "active"}`} href="/sites/">全部工具</a>
+      <a className={`filter-button ${category ? "" : "active"}`} href="/sites/">{t.allTools}</a>
       {categories.map((item) => (
         <a
           className={`filter-button ${category === item.slug ? "active" : ""}`}
@@ -189,33 +206,21 @@ export function CategoryFilter({ category }: { category: string }) {
 }
 
 export function UpdateCards() {
-  const [logs, setLogs] = useState<MaintenanceLog[]>([]);
-  const [message, setMessage] = useState("正在读取维护记录。");
-  const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
+  const dailyArticles = articles.filter((article) => article.generated).length
+    ? articles.filter((article) => article.generated)
+    : articles;
 
-  useEffect(() => {
-    getUpdates().then((result) => {
-      if (!result.configured) {
-        setMessage("D1 数据库未绑定，维护记录暂不可用。");
-        return;
-      }
-      setLogs(result.data?.logs || []);
-      setMessage("暂无维护记录。");
-    }).catch(() => {
-      setMessage("维护记录读取失败，请稍后重试。");
-    }).finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <LoadingCards label="正在读取维护记录。" />;
-  if (!logs.length) return <EmptyState>{message}</EmptyState>;
+  if (!dailyArticles.length) return <EmptyState>{t.noUpdates}</EmptyState>;
 
   return (
     <div className="update-grid">
-      {logs.map((log) => (
-        <article className="update-card" key={log.id}>
-          <p className="meta">{log.action} · {log.createdAt}</p>
-          <h3>{log.entityType}</h3>
-          <p>{log.note}</p>
+      {dailyArticles.map((article) => (
+        <article className="update-card" key={article.href}>
+          <p className="meta">{article.meta}</p>
+          <h3><a href={article.href}>{article.title}</a></h3>
+          <p>{article.summary}</p>
+          <a className="article-link" href={article.href}>{t.readArticle}</a>
         </article>
       ))}
     </div>
