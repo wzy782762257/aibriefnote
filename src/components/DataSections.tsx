@@ -23,7 +23,7 @@ export function CategoryChips() {
   }, []);
 
   const visible = categories.length
-    ? categories.slice(0, 8)
+    ? categories.filter((category) => category.siteCount > 0).slice(0, 10)
     : [
       { name: "AI聊天", slug: "ai-chat" },
       { name: "AI编程", slug: "ai-coding" },
@@ -192,7 +192,7 @@ export function CategoryFilter({ category }: { category: string }) {
   return (
     <aside className="filter-panel">
       <a className={`filter-button ${category ? "" : "active"}`} href="/sites/">{t.allTools}</a>
-      {categories.map((item) => (
+      {categories.filter((item) => item.siteCount > 0).map((item) => (
         <a
           className={`filter-button ${category === item.slug ? "active" : ""}`}
           href={`/sites/?category=${item.slug}`}
